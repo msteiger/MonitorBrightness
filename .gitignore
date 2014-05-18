@@ -1,0 +1,13 @@
+# eclipse settings folder
+bin/
+.metadata/
+.classpath
+.project
+.settings/
+
+# Maven output
+target/
+
+# Gradle
+build/
+.gradle/
