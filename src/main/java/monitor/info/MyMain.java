@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package monitor;
+package monitor.info;
 
-import monitor.HighLevelMonitorConfigurationAPI.MC_COLOR_TEMPERATURE;
+import monitor.Dxva2;
 import monitor.HighLevelMonitorConfigurationAPI.MC_DISPLAY_TECHNOLOGY_TYPE;
+import monitor.MyUser32;
 import monitor.MyWinUser.HMONITOR;
 import monitor.MyWinUser.MONITORENUMPROC;
 import monitor.MyWinUser.MONITORINFOEX;
@@ -27,21 +28,13 @@ import com.sun.jna.platform.win32.Kernel32;
 import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.Win32Exception;
 import com.sun.jna.platform.win32.WinDef.BOOL;
-import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.DWORDByReference;
 import com.sun.jna.platform.win32.WinDef.HDC;
 import com.sun.jna.platform.win32.WinDef.LPARAM;
 import com.sun.jna.platform.win32.WinDef.RECT;
-import com.sun.jna.ptr.IntByReference;
-import com.sun.jna.ptr.PointerByReference;
 
 public class MyMain
 {
-	enum A 
-	{
-		
-	}
-	
 	public static void main(String[] args)
 	{
 		System.out.println("Monitors: " + User32.INSTANCE.GetSystemMetrics(User32.SM_CMONITORS));

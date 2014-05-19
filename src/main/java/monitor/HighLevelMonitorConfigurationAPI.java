@@ -16,6 +16,8 @@
 
 package monitor;
 
+import monitor.util.EnumConverter;
+
 
 /**
  * A conversion of HighLevelMonitorConfigurationAPI.h
@@ -230,31 +232,58 @@ public interface HighLevelMonitorConfigurationAPI
 	/**
 	 * Specifies whether to set or get a monitor's red, green, or blue drive.
 	 */
-	enum MC_DRIVE_TYPE
+	public enum MC_DRIVE_TYPE
 	{
+		/**
+		 * Red drive
+		 */
 	    MC_RED_DRIVE,
+	    
+	    /**
+	     * Green drive
+	     */
 	    MC_GREEN_DRIVE,
+	    
+	    /**
+	     * Blue drive
+	     */
 	    MC_BLUE_DRIVE
-	
 	}
 	
 	/**
 	 * Specifies whether to get or set a monitor's red, green, or blue gain.
 	 */
-	enum MC_GAIN_TYPE
+	public enum MC_GAIN_TYPE
 	{
+		/**
+		 * Red gain
+		 */
 	    MC_RED_GAIN,
+	    
+	    /**
+	     * Green gain
+	     */
 	    MC_GREEN_GAIN,
+	    
+	    /**
+	     * Blue gain
+	     */
 	    MC_BLUE_GAIN
-	
 	}
 	
 	/**
 	 * Specifies whether to get or set the vertical or horizontal position of a monitor's display area.
 	 */
-	enum MC_POSITION_TYPE
+	public enum MC_POSITION_TYPE
 	{
+		/**
+		 * Horizontal position
+		 */
 	    MC_HORIZONTAL_POSITION,
+	    
+	    /**
+	     * Vertival position
+	     */
 	    MC_VERTICAL_POSITION 
 	
 	}
@@ -262,9 +291,16 @@ public interface HighLevelMonitorConfigurationAPI
 	/**
 	 * Specifies whether to get or set the width or height of a monitor's display area.
 	 */
-	enum MC_SIZE_TYPE
+	public enum MC_SIZE_TYPE
 	{
+		/**
+		 * Width
+		 */
 	    MC_WIDTH,
+	    
+	    /**
+	     * Height
+	     */
 	    MC_HEIGHT
 	
 	}
@@ -272,16 +308,51 @@ public interface HighLevelMonitorConfigurationAPI
 	/**
 	 * Describes a monitor's color temperature.
 	 */
-	enum MC_COLOR_TEMPERATURE
+	public enum MC_COLOR_TEMPERATURE
 	{
+		/**
+		 * Unknown temperature. 
+		 */
 	    MC_COLOR_TEMPERATURE_UNKNOWN,
+	    
+	    /**
+	     * 4,000 kelvins (K). 
+	     */
 	    MC_COLOR_TEMPERATURE_4000K, 
+	    
+	    /**
+	     * 5,000 kelvins (K). 
+	     */
 	    MC_COLOR_TEMPERATURE_5000K, 
+	    
+	    /**
+	     * 6,500 kelvins (K). 
+	     */
 	    MC_COLOR_TEMPERATURE_6500K, 
+	    
+	    /**
+	     * 7,500 kelvins (K). 
+	     */
 	    MC_COLOR_TEMPERATURE_7500K, 
+	    
+	    /**
+	     * 8,200 kelvins (K). 
+	     */
 	    MC_COLOR_TEMPERATURE_8200K, 
+	    
+	    /**
+	     * 9,300 kelvins (K). 
+	     */
 	    MC_COLOR_TEMPERATURE_9300K, 
+	    
+	    /**
+	     * 10,000 kelvins (K). 
+	     */
 	    MC_COLOR_TEMPERATURE_10000K,
+	    
+	    /**
+	     * 11,500 kelvins (K). 
+	     */
 	    MC_COLOR_TEMPERATURE_11500K
 	    
 	}

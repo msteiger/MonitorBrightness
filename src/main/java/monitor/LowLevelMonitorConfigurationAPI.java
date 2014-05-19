@@ -3,6 +3,8 @@ package monitor;
 import java.util.Arrays;
 import java.util.List;
 
+import monitor.util.EnumConverter;
+
 import com.sun.jna.Structure;
 import com.sun.jna.platform.win32.WinDef.BYTE;
 import com.sun.jna.platform.win32.WinDef.DWORD;
@@ -55,7 +57,45 @@ public interface LowLevelMonitorConfigurationAPI
 	    /**
 	     * Set Parameter VCP code. Sending a command of this type changes some aspect of the monitor's operation.
 	     */
-	    MC_SET_PARAMETER
-	}
+	    MC_SET_PARAMETER;
+	    
+	    /**
+	     * Defines a Reference to the enum
+	     */
+	    public static class ByReference extends com.sun.jna.ptr.ByReference {
 
+	    	/**
+	    	 * Create an uninitialized reference
+	    	 */
+	    	public ByReference() {
+	    		super(4);
+	    	}
+	    	
+	        /**
+	         * Instantiates a new reference.
+	         * @param value the value
+	         */
+	        public ByReference(MC_VCP_CODE_TYPE value) {
+	            super(4);
+	            setValue(value);
+	        }
+
+	        /**
+	         * Sets the value.
+	         * @param value the new value
+	         */
+	        public void setValue(MC_VCP_CODE_TYPE value) {
+	            getPointer().setInt(0, EnumConverter.toInteger(value));
+	        }
+
+	        /**
+	         * Gets the value.
+	         * @return the value
+	         */
+	        public MC_VCP_CODE_TYPE getValue() {
+	            return EnumConverter.fromInteger(getPointer().getInt(0), MC_VCP_CODE_TYPE.class);
+	        }
+	    }
+	}
 }
+

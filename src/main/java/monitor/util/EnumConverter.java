@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package monitor;
+package monitor.util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +23,7 @@ import com.sun.jna.FromNativeContext;
 import com.sun.jna.ToNativeContext;
 import com.sun.jna.TypeConverter;
 
-class EnumConverter<T extends Enum<T>> implements TypeConverter {
+public class EnumConverter<T extends Enum<T>> implements TypeConverter {
 	 
     private static final Logger logger = LoggerFactory.getLogger(EnumConverter.class);
 	

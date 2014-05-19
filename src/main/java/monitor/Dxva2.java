@@ -260,11 +260,14 @@ public interface Dxva2 extends StdCallLibrary, PhysicalMonitorEnumerationAPI, Hi
 	
 	/**
 	 * Retrieves a monitor's minimum, maximum, and current width or height.
-	 * @param hMonitor
-	 * @param stSizeType
-	 * @param pdwMinimumWidthOrHeight
-	 * @param pdwCurrentWidthOrHeight
-	 * @param pdwMaximumWidthOrHeight
+	 * <br/><br/>
+	 * If this function is supported, the GetMonitorCapabilities function returns the MC_CAPS_DISPLAY_AREA_SIZE flag.
+	 * This function takes about 40 milliseconds to return. The width and height settings are continuous monitor settings. 
+	 * @param hMonitor Handle to a physical monitor. To get the monitor handle, call GetPhysicalMonitorsFromHMONITOR
+	 * @param stSizeType A member of the MC_SIZE_TYPE enumeration, specifying whether to retrieve the width or the height. 
+	 * @param pdwMinimumWidthOrHeight Receives the minimum width or height. 
+	 * @param pdwCurrentWidthOrHeight Receives the current width or height. 
+	 * @param pdwMaximumWidthOrHeight Receives the maximum width or height. 
 	 * @return If the function succeeds, the return value is TRUE. If the function fails, the return value is FALSE.
 	 */
 	BOOL GetMonitorDisplayAreaSize(HANDLE hMonitor, MC_SIZE_TYPE stSizeType, DWORDByReference pdwMinimumWidthOrHeight,
@@ -272,11 +275,14 @@ public interface Dxva2 extends StdCallLibrary, PhysicalMonitorEnumerationAPI, Hi
 
 	/**
 	 * Retrieves a monitor's minimum, maximum, and current horizontal or vertical position.
-	 * @param hMonitor
-	 * @param ptPositionType
-	 * @param pdwMinimumPosition
-	 * @param pdwCurrentPosition
-	 * @param pdwMaximumPosition
+	 * <br/><br/>
+	 * If this function is supported, the GetMonitorCapabilities function returns the MC_CAPS_DISPLAY_AREA_POSITION flag.
+	 * This function takes about 40 milliseconds to return. The horizontal and vertical position are continuous monitor settings.
+	 * @param hMonitor Handle to a physical monitor. To get the monitor handle, call GetPhysicalMonitorsFromHMONITOR
+	 * @param ptPositionType A member of the MC_POSITION_TYPE enumeration, specifying whether to retrieve the horizontal position or the vertical position. 
+	 * @param pdwMinimumPosition Receives the minimum horizontal or vertical position. 
+	 * @param pdwCurrentPosition Receives the current horizontal or vertical position. 
+	 * @param pdwMaximumPosition Receives the maximum horizontal or vertical position. 
 	 * @return If the function succeeds, the return value is TRUE. If the function fails, the return value is FALSE.
 	 */
 	BOOL GetMonitorDisplayAreaPosition(HANDLE hMonitor, MC_POSITION_TYPE ptPositionType,
@@ -285,18 +291,25 @@ public interface Dxva2 extends StdCallLibrary, PhysicalMonitorEnumerationAPI, Hi
 
 	/**
 	 * Sets the width or height of a monitor's display area.
-	 * @param hMonitor
-	 * @param stSizeType
-	 * @param dwNewDisplayAreaWidthOrHeight
+	 * <br/><br/>
+	 * If this function is supported, the GetMonitorCapabilities function returns the MC_CAPS_DISPLAY_AREA_SIZE flag.
+	 * This function takes about 50 milliseconds to return. The width and height settings are continuous monitor settings.
+	 * @param hMonitor Handle to a physical monitor. To get the monitor handle, call GetPhysicalMonitorsFromHMONITOR
+	 * @param stSizeType A member of the MC_SIZE_TYPE enumeration, specifying whether to set the width or the height. 
+	 * @param dwNewDisplayAreaWidthOrHeight Display area width or height. To get the minimum and maximum width and height, 
+	 *        call GetMonitorDisplayAreaSize. 
 	 * @return If the function succeeds, the return value is TRUE. If the function fails, the return value is FALSE.
 	 */
 	BOOL SetMonitorDisplayAreaSize(HANDLE hMonitor, MC_SIZE_TYPE stSizeType, int dwNewDisplayAreaWidthOrHeight);
 
 	/**
 	 * Sets the horizontal or vertical position of a monitor's display area.
-	 * @param hMonitor
-	 * @param ptPositionType
-	 * @param dwNewPosition
+	 * <br/><br/>
+	 * If this function is supported, the GetMonitorCapabilities function returns the MC_CAPS_DISPLAY_AREA_POSITION flag.
+	 * This function takes about 50 milliseconds to return. The horizontal and vertical position are continuous monitor settings. 
+	 * @param hMonitor Handle to a physical monitor. To get the monitor handle, call GetPhysicalMonitorsFromHMONITOR
+	 * @param ptPositionType A member of the MC_POSITION_TYPE enumeration, specifying whether to set the horizontal position or the vertical position. 
+	 * @param dwNewPosition Horizontal or vertical position. To get the minimum and maximum position, call GetMonitorDisplayAreaPosition. 
 	 * @return If the function succeeds, the return value is TRUE. If the function fails, the return value is FALSE.
 	 */
 	BOOL SetMonitorDisplayAreaPosition(HANDLE hMonitor, MC_POSITION_TYPE ptPositionType, int dwNewPosition);
@@ -306,15 +319,37 @@ public interface Dxva2 extends StdCallLibrary, PhysicalMonitorEnumerationAPI, Hi
 	 ******************************************************************************/
 	
 	/**
-	 * Restores a monitor's color settings to their factory defaults.
-	 * @param hMonitor
+	 * Restores a monitor's color settings to their factory defaults. This function potentially changes the current
+	 * value of the monitor's brightness, contrast, color temperature, drive, and gain. The current value of each
+	 * setting is changed to its factory default. The default settings depend on the manufacturer. This function can
+	 * also change the range of supported values for each of these settings. The function does not enable any monitor
+	 * settings that were disabled. If this function is supported, the GetMonitorCapabilities function returns the
+	 * MC_CAPS_RESTORE_FACTORY_COLOR_DEFAULTS flag. This function takes about 5 seconds to return. This function might
+	 * reset monitor settings that are not accessible through the high-level monitor configuration functions. Whether
+	 * this occurs depends on the specific model of monitor. The following settings are not affected by this function:
+	 * <li>Display area size</li>
+	 * <li>Display area position</li>
+	 * <li>Capabilities flags</li>
+	 * @param hMonitor Handle to a physical monitor. To get the monitor handle, call GetPhysicalMonitorsFromHMONITOR
 	 * @return If the function succeeds, the return value is TRUE. If the function fails, the return value is FALSE.
 	 */
 	BOOL RestoreMonitorFactoryColorDefaults(HANDLE hMonitor);
 
 	/**
-	 * Restores a monitor's settings to their factory defaults.
-	 * @param hMonitor
+	 * Restores a monitor's settings to their factory defaults. This function restores all of the settings that are
+	 * supported by the high-level monitor configuration functions. It might also restore settings that are available
+	 * only through the low-level functions and are not supported by the high-level functions. The current value of each
+	 * setting is changed to its factory default. The exact settings that change, and the default values of those
+	 * settings, depend on the manufacturer. This function can also change the range of supported values for some
+	 * settings. If this function is supported, the GetMonitorCapabilities function returns the
+	 * MC_CAPS_RESTORE_FACTORY_DEFAULTS flag. This function takes about 5 seconds to return. If GetMonitorCapabilities
+	 * returns the MC_RESTORE_FACTORY_DEFAULTS_ENABLES_MONITOR_SETTINGS flag, this function also enables all of the
+	 * monitor settings that are supported by the high-level functions. It is sometimes possible for an application to
+	 * disable certain settings by calling the low-level functions. It is also possible for the user to disable certain
+	 * settings by adjusting settings on the monitor's physical control panel. If that happens, the setting can only be
+	 * re-enabled through the control panel or by calling RestoreMonitorFactoryDefaults. It is not possible to disable
+	 * any settings by using the high-level functions.
+	 * @param hMonitor Handle to a physical monitor. To get the monitor handle, call GetPhysicalMonitorsFromHMONITOR
 	 * @return If the function succeeds, the return value is TRUE. If the function fails, the return value is FALSE.
 	 */
 	BOOL RestoreMonitorFactoryDefaults(HANDLE hMonitor);
@@ -323,45 +358,69 @@ public interface Dxva2 extends StdCallLibrary, PhysicalMonitorEnumerationAPI, Hi
 
 	/**
 	 * Retrieves the current value, maximum value, and code type of a Virtual Control Panel (VCP) code for a monitor.
-	 * @param hMonitor
-	 * @param bVCPCode
-	 * @param pvct
-	 * @param pdwCurrentValue
-	 * @param pdwMaximumValue
+	 * This function corresponds to the "Get VCP Feature & VCP Feature Reply" command from the Display Data 
+	 * Channel Command Interface (DDC/CI) standard. Vendor-specific VCP codes can be used with this function.
+	 * This function takes about 40 milliseconds to return. 
+	 * @param hMonitor Handle to a physical monitor. To get the monitor handle, call GetPhysicalMonitorsFromHMONITOR
+	 * @param bVCPCode VCP code to query. The VCP codes are Include the VESA Monitor Control Command Set (MCCS)
+	 *        standard, versions 1.0 and 2.0. This parameter must specify a continuous or non-continuous VCP, or a 
+	 *        vendor-specific code. It should not be a table control code.
+	 * @param pvct Receives the VCP code type, as a member of the MC_VCP_CODE_TYPE enumeration. This parameter can be NULL. 
+	 * @param pdwCurrentValue Receives the current value of the VCP code. This parameter can be NULL. 
+	 * @param pdwMaximumValue If bVCPCode specifies a continuous VCP code, this parameter receives the maximum value of 
+	 *        the VCP code. If bVCPCode specifies a non-continuous VCP code, the value received in this parameter 
+	 *        is undefined. This parameter can be NULL. 
 	 * @return If the function succeeds, the return value is TRUE. If the function fails, the return value is FALSE.
 	 */
-	BOOL GetVCPFeatureAndVCPFeatureReply(HANDLE hMonitor, BYTE bVCPCode, MC_VCP_CODE_TYPE pvct,
+	BOOL GetVCPFeatureAndVCPFeatureReply(HANDLE hMonitor, BYTE bVCPCode, MC_VCP_CODE_TYPE.ByReference pvct,
 			DWORDByReference pdwCurrentValue, DWORDByReference pdwMaximumValue);
 
 	/**
-	 * Sets the value of a Virtual Control Panel (VCP) code for a monitor.
-	 * @param hMonitor
-	 * @param bVCPCode
-	 * @param dwNewValue
+	 * Sets the value of a Virtual Control Panel (VCP) code for a monitor. This function corresponds to the
+	 * "Set VCP Feature" command from the Display Data Channel Command Interface (DDC/CI) standard. This function takes
+	 * about 50 milliseconds to return.
+	 * @param hMonitor Handle to a physical monitor. To get the monitor handle, call GetPhysicalMonitorsFromHMONITOR
+	 * @param bVCPCode VCP code to set. The VCP codes are defined in the VESA Monitor Control Command Set (MCCS)
+	 * standard, version 1.0 and 2.0. This parameter must specify a continuous or non-continuous VCP, or a
+	 * vendor-specific code. It should not be a table control code.
+	 * @param dwNewValue Value of the VCP code.
 	 * @return If the function succeeds, the return value is TRUE. If the function fails, the return value is FALSE.
 	 */
 	BOOL SetVCPFeature(HANDLE hMonitor, BYTE bVCPCode, DWORD dwNewValue);
 
 	/**
-	 * Saves the current monitor settings to the display's nonvolatile storage.
-	 * @param hMonitor
+	 * Saves the current monitor settings to the display's nonvolatile storage. This function corresponds to the
+	 * "Save Current Settings" function from the Display Data Channel Command Interface (DDC/CI) standard. This function
+	 * takes about 200 milliseconds to return. This low-level function is identical to the high-level function
+	 * SaveCurrentMonitorSettings.
+	 * @param hMonitor Handle to a physical monitor. To get the monitor handle, call GetPhysicalMonitorsFromHMONITOR
 	 * @return If the function succeeds, the return value is TRUE. If the function fails, the return value is FALSE.
 	 */
 	BOOL SaveCurrentSettings(HANDLE hMonitor);
 
 	/**
 	 * Retrieves the length of a monitor's capabilities string.
-	 * @param hMonitor
-	 * @param pdwCapabilitiesStringLengthInCharacters
+	 * This function usually returns quickly, but sometimes it can take several seconds to complete. 
+	 * @param hMonitor Handle to a physical monitor. To get the monitor handle, call GetPhysicalMonitorsFromHMONITOR
+	 * @param pdwCapabilitiesStringLengthInCharacters Receives the length of the capabilities string, in characters, including the terminating null character. 
 	 * @return If the function succeeds, the return value is TRUE. If the function fails, the return value is FALSE.
 	 */
 	BOOL GetCapabilitiesStringLength(HANDLE hMonitor, DWORDByReference pdwCapabilitiesStringLengthInCharacters);
 
 	/**
-	 * Retrieves a string describing a monitor's capabilities.
-	 * @param hMonitor
-	 * @param pszASCIICapabilitiesString
-	 * @param dwCapabilitiesStringLengthInCharacters
+	 * Retrieves a string describing a monitor's capabilities. This function corresponds to the
+	 * "Capabilities Request & Capabilities Reply" command from the Display Data Channel Command Interface (DDC/CI)
+	 * standard. For more information about the capabilities string, refer to the DDC/CI standard. This function usually
+	 * returns quickly, but sometimes it can take several seconds to complete. You can update a monitor's capabilities
+	 * string by adding an AddReg directive to the monitor's INF file. Add a registry key named "CapabilitiesString" to
+	 * the monitor's driver key. The value of the registry key is the capabilities string. The registry data type is
+	 * REG_SZ.
+	 * @param hMonitor Handle to a physical monitor. To get the monitor handle, call GetPhysicalMonitorsFromHMONITOR
+	 * @param pszASCIICapabilitiesString Pointer to a buffer that receives the monitor's capabilities string. The caller
+	 *        must allocate this buffer. To get the size of the string, call GetCapabilitiesStringLength. The capabilities
+	 *        string is always an ASCII string. The buffer must include space for the terminating null character.
+	 * @param dwCapabilitiesStringLengthInCharacters Size of pszASCIICapabilitiesString in characters, including the
+	 *        terminating null character.
 	 * @return If the function succeeds, the return value is TRUE. If the function fails, the return value is FALSE.
 	 */
 	BOOL CapabilitiesRequestAndCapabilitiesReply(HANDLE hMonitor, LPSTR pszASCIICapabilitiesString,
