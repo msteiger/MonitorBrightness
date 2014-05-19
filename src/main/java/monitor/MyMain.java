@@ -16,67 +16,85 @@
 
 package monitor;
 
+import monitor.HighLevelMonitorConfigurationAPI.MC_COLOR_TEMPERATURE;
+import monitor.HighLevelMonitorConfigurationAPI.MC_DISPLAY_TECHNOLOGY_TYPE;
+import monitor.MyWinUser.HMONITOR;
 import monitor.MyWinUser.MONITORENUMPROC;
-import monitor.MyWinUser.MONITORINFO;
-import monitor.dxvga.HMONITOR;
-import monitor.dxvga.LPDWORD;
-import monitor.dxvga.PHYSICAL_MONITOR;
+import monitor.MyWinUser.MONITORINFOEX;
+import monitor.PhysicalMonitorEnumerationAPI.PHYSICAL_MONITOR;
 
 import com.sun.jna.platform.win32.Kernel32;
 import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.Win32Exception;
-import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.platform.win32.WinDef.BOOL;
+import com.sun.jna.platform.win32.WinDef.DWORD;
+import com.sun.jna.platform.win32.WinDef.DWORDByReference;
 import com.sun.jna.platform.win32.WinDef.HDC;
 import com.sun.jna.platform.win32.WinDef.LPARAM;
 import com.sun.jna.platform.win32.WinDef.RECT;
 import com.sun.jna.ptr.IntByReference;
+import com.sun.jna.ptr.PointerByReference;
 
 public class MyMain
 {
+	enum A 
+	{
+		
+	}
+	
 	public static void main(String[] args)
 	{
-		System.out.println(User32.INSTANCE.GetSystemMetrics(User32.SM_CMONITORS));
+		System.out.println("Monitors: " + User32.INSTANCE.GetSystemMetrics(User32.SM_CMONITORS));
 		
-		System.out.println(MyWinUser.INSTANCE);
-		MyWinUser.INSTANCE.EnumDisplayMonitors(null, null, new MONITORENUMPROC() {
+		MyUser32.INSTANCE.EnumDisplayMonitors(null, null, new MONITORENUMPROC() {
 
 			@Override
-			public int apply(HMONITOR m, HDC hdc, RECT rect, LPARAM lparam)
+			public int apply(HMONITOR hMonitor, HDC hdc, RECT rect, LPARAM lparam)
 			{
-				System.out.println(m);
+				System.out.println("Monitor handle: " + hMonitor);
 
-				MONITORINFO info = new MONITORINFO();
-				MyWinUser.INSTANCE.GetMonitorInfo(m, info);
+				MONITORINFOEX info = new MONITORINFOEX();
+				MyUser32.INSTANCE.GetMonitorInfo(hMonitor, info);
 				System.out.println(info.rcMonitor);
 				
+				DWORDByReference pdwNumberOfPhysicalMonitors = new DWORDByReference();
+				Dxva2.INSTANCE.GetNumberOfPhysicalMonitorsFromHMONITOR(hMonitor, pdwNumberOfPhysicalMonitors);
+				int monitorCount = pdwNumberOfPhysicalMonitors.getValue().intValue();
 				
-				PHYSICAL_MONITOR[] physMons = new PHYSICAL_MONITOR[] { new PHYSICAL_MONITOR() };
-				dxvga.INSTANCE.GetPhysicalMonitorsFromHMONITOR(m, 1, physMons);
-				System.out.println(physMons[0].szPhysicalMonitorDescription);
+				System.out.println("Physical monitors for " + hMonitor + ": " + monitorCount);
 				
-				LPDWORD caps = new LPDWORD();
-				LPDWORD temps = new LPDWORD();
-				BOOL ret = dxvga.INSTANCE.GetMonitorCapabilities(physMons[0].hPhysicalMonitor, caps, temps);
-				System.out.println("RETURN " + ret.intValue());
-				System.out.println(caps.getValue());
-				System.out.println(temps.getValue());
+				PHYSICAL_MONITOR[] physMons = new PHYSICAL_MONITOR[monitorCount];
+				Dxva2.INSTANCE.GetPhysicalMonitorsFromHMONITOR(hMonitor, monitorCount, physMons);
 				
-				IntByReference pdwMinimumBrightness = new IntByReference();
-				IntByReference pdwCurrentBrightness = new IntByReference();
-				IntByReference pdwMaximumBrightness = new IntByReference();
-				ret = dxvga.INSTANCE.GetMonitorBrightness(physMons[0].hPhysicalMonitor, pdwMinimumBrightness, pdwCurrentBrightness, pdwMaximumBrightness);
-				int err = Kernel32.INSTANCE.GetLastError();
-				if (err != 0)
-					throw new Win32Exception(err);
+				for (int i = 0; i < monitorCount; i++)
+				{
+					System.out.println(physMons[i].szPhysicalMonitorDescription);
 				
-				System.out.println("ERROR " + err);
-				System.out.println("RETURN2 " + ret.intValue());
+					MC_DISPLAY_TECHNOLOGY_TYPE.ByReference techType = new MC_DISPLAY_TECHNOLOGY_TYPE.ByReference();
+					Dxva2.INSTANCE.GetMonitorTechnologyType(physMons[0].hPhysicalMonitor, techType);
+					System.out.println("TECHTYPE: " + techType.getValue());
 				
-				System.out.println(pdwMinimumBrightness.getValue());
-				System.out.println(pdwCurrentBrightness.getValue());
-				System.out.println(pdwMaximumBrightness.getValue());
-
+					DWORDByReference caps = new DWORDByReference();
+					DWORDByReference temps = new DWORDByReference();
+					BOOL ret = Dxva2.INSTANCE.GetMonitorCapabilities(physMons[0].hPhysicalMonitor, caps, temps);
+					System.out.println(caps.getValue());
+					System.out.println(temps.getValue());
+					
+					DWORDByReference pdwMinimumBrightness = new DWORDByReference();
+					DWORDByReference pdwCurrentBrightness = new DWORDByReference();
+					DWORDByReference pdwMaximumBrightness = new DWORDByReference();
+					ret = Dxva2.INSTANCE.GetMonitorBrightness(physMons[0].hPhysicalMonitor, pdwMinimumBrightness, pdwCurrentBrightness, pdwMaximumBrightness);
+					int err = Kernel32.INSTANCE.GetLastError();
+					if (err != 0)
+						throw new Win32Exception(err);
+					
+					System.out.println("ERROR " + err);
+					System.out.println("RETURN2 " + ret.intValue());
+					
+					System.out.println(pdwMinimumBrightness.getValue());
+					System.out.println(pdwCurrentBrightness.getValue());
+					System.out.println(pdwMaximumBrightness.getValue());
+				}
 				
 //				ret = dxvga.INSTANCE.SetMonitorBrightness(physMons[0].hPhysicalMonitor, pdwCurrentBrightness.getValue() + 5);
 

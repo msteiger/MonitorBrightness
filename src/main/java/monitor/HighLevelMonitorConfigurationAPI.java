@@ -1,0 +1,288 @@
+/*
+ * Copyright 2014 Martin Steiger
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package monitor;
+
+
+/**
+ * A conversion of HighLevelMonitorConfigurationAPI.h
+ * @author Martin Steiger
+ */
+public interface HighLevelMonitorConfigurationAPI
+{
+	/**
+	 * The monitor does not support any monitor settings.
+	 */
+	final int MC_CAPS_NONE =                                            0x00000000;
+	/**
+	 * The monitor supports the GetMonitorTechnologyType function.
+	 */
+	final int MC_CAPS_MONITOR_TECHNOLOGY_TYPE =                         0x00000001;
+	
+	/**
+	 * The monitor supports the GetMonitorBrightness and SetMonitorBrightness functions.
+	 */
+	final int MC_CAPS_BRIGHTNESS =                                      0x00000002;
+	
+	/**
+	 * The monitor supports the GetMonitorContrast and SetMonitorContrast functions.
+	 */
+	final int MC_CAPS_CONTRAST =                                        0x00000004;
+	
+	/**
+	 * The monitor supports the GetMonitorColorTemperature and SetMonitorColorTemperature functions.
+	 */
+	final int MC_CAPS_COLOR_TEMPERATURE =                               0x00000008;
+	
+	/**
+	 * The monitor supports the GetMonitorRedGreenOrBlueGain and SetMonitorRedGreenOrBlueGain functions.
+	 */
+	final int MC_CAPS_RED_GREEN_BLUE_GAIN =                             0x00000010;
+	
+	/**
+	 * The monitor supports the GetMonitorRedGreenOrBlueDrive and SetMonitorRedGreenOrBlueDrive functions.
+	 */
+	final int MC_CAPS_RED_GREEN_BLUE_DRIVE =                            0x00000020;
+	
+	/**
+	 * The monitor supports the DegaussMonitor function.
+	 */
+	final int MC_CAPS_DEGAUSS =                                         0x00000040;
+	
+	/**
+	 * The monitor supports the GetMonitorDisplayAreaPosition and SetMonitorDisplayAreaPosition functions.
+	 */
+	final int MC_CAPS_DISPLAY_AREA_POSITION =                           0x00000080;
+	
+	/**
+	 * The monitor supports the GetMonitorDisplayAreaSize and SetMonitorDisplayAreaSize functions.
+	 */
+	final int MC_CAPS_DISPLAY_AREA_SIZE =                               0x00000100;
+	
+	/**
+	 * The monitor supports the RestoreMonitorFactoryDefaults function.
+	 */
+	final int MC_CAPS_RESTORE_FACTORY_DEFAULTS =                        0x00000400;
+
+	/**
+	 * The monitor supports the RestoreMonitorFactoryColorDefaults function.
+	 */
+	final int MC_CAPS_RESTORE_FACTORY_COLOR_DEFAULTS =                  0x00000800;
+	
+	/**
+	 * If this flag is present, calling the RestoreMonitorFactoryDefaults function enables all of 
+	 * the monitor settings used by the high-level monitor configuration functions. For more 
+	 * information, see the Remarks section in RestoreMonitorFactoryDefaults.
+	 */
+	final int MC_RESTORE_FACTORY_DEFAULTS_ENABLES_MONITOR_SETTINGS =    0x00001000;         
+	
+	/**
+	 * No color temperatures are supported.
+	 */
+	final int MC_SUPPORTED_COLOR_TEMPERATURE_NONE =                     0x00000000;
+	
+	/**
+	 * The monitor supports 4,000 kelvins (K) color temperature.
+	 */
+	final int MC_SUPPORTED_COLOR_TEMPERATURE_4000K =                    0x00000001;
+
+	/**
+	 * The monitor supports 5,000 K color temperature.
+	 */
+	final int MC_SUPPORTED_COLOR_TEMPERATURE_5000K =                    0x00000002;
+
+	/**
+	 * The monitor supports 6,500 K color temperature.
+	 */
+	final int MC_SUPPORTED_COLOR_TEMPERATURE_6500K =                    0x00000004;
+
+	/**
+	 * The monitor supports 7,500 K color temperature.
+	 */
+	final int MC_SUPPORTED_COLOR_TEMPERATURE_7500K =                    0x00000008;
+
+	/**
+	 * The monitor supports 8,200 K color temperature.
+	 */
+	final int MC_SUPPORTED_COLOR_TEMPERATURE_8200K =                    0x00000010;
+
+	/**
+	 * The monitor supports 9,300 K color temperature.
+	 */
+	final int MC_SUPPORTED_COLOR_TEMPERATURE_9300K =                    0x00000020;
+
+	/**
+	 * The monitor supports 10,000 K color temperature.
+	 */
+	final int MC_SUPPORTED_COLOR_TEMPERATURE_10000K =                   0x00000040;
+
+	/**
+	 * The monitor supports 11,500 K color temperature.
+	 */
+	final int MC_SUPPORTED_COLOR_TEMPERATURE_11500K =                   0x00000080;
+
+	// ******************************************************************************
+	//   Enumerations
+	// ******************************************************************************
+	
+	/**
+	 * Identifies monitor display technologies.
+	 */
+	public enum MC_DISPLAY_TECHNOLOGY_TYPE
+	{
+		/**
+		 * Shadow-mask cathode ray tube (CRT).
+		 */
+	    MC_SHADOW_MASK_CATHODE_RAY_TUBE,
+	    
+	    /**
+	     * Aperture-grill CRT.
+	     */
+	    MC_APERTURE_GRILL_CATHODE_RAY_TUBE,
+	    
+	    /**
+	     * Thin-film transistor (TFT) display.
+	     */
+	    MC_THIN_FILM_TRANSISTOR,
+	    
+	    /**
+	     * Liquid crystal on silicon (LCOS) display.
+	     */
+	    MC_LIQUID_CRYSTAL_ON_SILICON,
+	    
+	    /**
+	     * Plasma display.
+	     */
+	    MC_PLASMA,
+	    
+	    /**
+	     * Organic light emitting diode (LED) display.
+	     */
+	    MC_ORGANIC_LIGHT_EMITTING_DIODE,
+	    
+	    /**
+	     * Electroluminescent display.
+	     */
+	    MC_ELECTROLUMINESCENT,
+	    
+	    /**
+	     * Microelectromechanical display.
+	     */
+	    MC_MICROELECTROMECHANICAL,
+	    
+	    /**
+	     * Field emission device (FED) display.
+	     */
+	    MC_FIELD_EMISSION_DEVICE;
+	    
+	    /**
+	     * Defines a Reference to the enum
+	     */
+	    public static class ByReference extends com.sun.jna.ptr.ByReference {
+
+	    	/**
+	    	 * Create an uninitialized reference
+	    	 */
+	    	public ByReference() {
+	    		super(4);
+	    	}
+	    	
+	        /**
+	         * Instantiates a new reference.
+	         * @param value the value
+	         */
+	        public ByReference(MC_DISPLAY_TECHNOLOGY_TYPE value) {
+	            super(4);
+	            setValue(value);
+	        }
+
+	        /**
+	         * Sets the value.
+	         * @param value the new value
+	         */
+	        public void setValue(MC_DISPLAY_TECHNOLOGY_TYPE value) {
+	            getPointer().setInt(0, EnumConverter.toInteger(value));
+	        }
+
+	        /**
+	         * Gets the value.
+	         * @return the value
+	         */
+	        public MC_DISPLAY_TECHNOLOGY_TYPE getValue() {
+	            return EnumConverter.fromInteger(getPointer().getInt(0), MC_DISPLAY_TECHNOLOGY_TYPE.class);
+	        }
+	    }
+	}
+	
+	/**
+	 * Specifies whether to set or get a monitor's red, green, or blue drive.
+	 */
+	enum MC_DRIVE_TYPE
+	{
+	    MC_RED_DRIVE,
+	    MC_GREEN_DRIVE,
+	    MC_BLUE_DRIVE
+	
+	}
+	
+	/**
+	 * Specifies whether to get or set a monitor's red, green, or blue gain.
+	 */
+	enum MC_GAIN_TYPE
+	{
+	    MC_RED_GAIN,
+	    MC_GREEN_GAIN,
+	    MC_BLUE_GAIN
+	
+	}
+	
+	/**
+	 * Specifies whether to get or set the vertical or horizontal position of a monitor's display area.
+	 */
+	enum MC_POSITION_TYPE
+	{
+	    MC_HORIZONTAL_POSITION,
+	    MC_VERTICAL_POSITION 
+	
+	}
+	
+	/**
+	 * Specifies whether to get or set the width or height of a monitor's display area.
+	 */
+	enum MC_SIZE_TYPE
+	{
+	    MC_WIDTH,
+	    MC_HEIGHT
+	
+	}
+	
+	/**
+	 * Describes a monitor's color temperature.
+	 */
+	enum MC_COLOR_TEMPERATURE
+	{
+	    MC_COLOR_TEMPERATURE_UNKNOWN,
+	    MC_COLOR_TEMPERATURE_4000K, 
+	    MC_COLOR_TEMPERATURE_5000K, 
+	    MC_COLOR_TEMPERATURE_6500K, 
+	    MC_COLOR_TEMPERATURE_7500K, 
+	    MC_COLOR_TEMPERATURE_8200K, 
+	    MC_COLOR_TEMPERATURE_9300K, 
+	    MC_COLOR_TEMPERATURE_10000K,
+	    MC_COLOR_TEMPERATURE_11500K
+	    
+	}
+}
