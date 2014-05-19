@@ -26,6 +26,8 @@ import com.sun.jna.TypeConverter;
 public class EnumConverter<T extends Enum<T>> implements TypeConverter {
 	 
     private static final Logger logger = LoggerFactory.getLogger(EnumConverter.class);
+
+	public static final int UNINITIALIZED = -1;
 	
     private final Class<T> clazz;
  
@@ -82,6 +84,9 @@ public class EnumConverter<T extends Enum<T>> implements TypeConverter {
     
     public static <E extends Enum<E>> E fromInteger(int idx, Class<E> clazz)
     {
+    	if (idx == EnumConverter.UNINITIALIZED)
+    		return null;
+    	
     	E[] vals = clazz.getEnumConstants();
     	return vals[idx];
     }

@@ -200,6 +200,7 @@ public interface HighLevelMonitorConfigurationAPI
 	    	 */
 	    	public ByReference() {
 	    		super(4);
+	    		getPointer().setInt(0, EnumConverter.UNINITIALIZED);
 	    	}
 	    	
 	        /**
@@ -224,7 +225,7 @@ public interface HighLevelMonitorConfigurationAPI
 	         * @return the value
 	         */
 	        public MC_DISPLAY_TECHNOLOGY_TYPE getValue() {
-	            return EnumConverter.fromInteger(getPointer().getInt(0), MC_DISPLAY_TECHNOLOGY_TYPE.class);
+				return EnumConverter.fromInteger(getPointer().getInt(0), MC_DISPLAY_TECHNOLOGY_TYPE.class);
 	        }
 	    }
 	}

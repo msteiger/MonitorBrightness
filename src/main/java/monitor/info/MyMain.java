@@ -32,6 +32,7 @@ import com.sun.jna.platform.win32.WinDef.DWORDByReference;
 import com.sun.jna.platform.win32.WinDef.HDC;
 import com.sun.jna.platform.win32.WinDef.LPARAM;
 import com.sun.jna.platform.win32.WinDef.RECT;
+import com.sun.jna.ptr.IntByReference;
 
 public class MyMain
 {
@@ -63,13 +64,15 @@ public class MyMain
 				{
 					System.out.println(physMons[i].szPhysicalMonitorDescription);
 				
+//					IntByReference techType = new IntByReference();
 					MC_DISPLAY_TECHNOLOGY_TYPE.ByReference techType = new MC_DISPLAY_TECHNOLOGY_TYPE.ByReference();
-					Dxva2.INSTANCE.GetMonitorTechnologyType(physMons[0].hPhysicalMonitor, techType);
+					BOOL ret = Dxva2.INSTANCE.GetMonitorTechnologyType(physMons[0].hPhysicalMonitor, techType);
+					System.out.println(ret);
 					System.out.println("TECHTYPE: " + techType.getValue());
 				
 					DWORDByReference caps = new DWORDByReference();
 					DWORDByReference temps = new DWORDByReference();
-					BOOL ret = Dxva2.INSTANCE.GetMonitorCapabilities(physMons[0].hPhysicalMonitor, caps, temps);
+					ret = Dxva2.INSTANCE.GetMonitorCapabilities(physMons[0].hPhysicalMonitor, caps, temps);
 					System.out.println(caps.getValue());
 					System.out.println(temps.getValue());
 					
