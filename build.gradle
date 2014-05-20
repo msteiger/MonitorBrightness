@@ -15,6 +15,7 @@ dependencies {
     compile group: 'com.google.guava', name: 'guava', version: '17.0'
     compile group: 'net.java.dev.jna', name: 'jna', version: '4.1.0'
     compile group: 'net.java.dev.jna', name: 'jna-platform', version: '4.1.0'
+	compile group: 'com.github.sarxos', name: 'webcam-capture', version: '0.3.9'
 
 	runtime group: 'ch.qos.logback', name: 'logback-classic', version: '1.1.2'
 
