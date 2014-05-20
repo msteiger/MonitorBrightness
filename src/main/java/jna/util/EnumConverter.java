@@ -69,28 +69,6 @@ public class EnumConverter<T extends Enum<T>> implements TypeConverter {
 	public Class<Integer> nativeType() {
         return Integer.class;
     }
-    
-    public static <E extends Enum<E>> int toInteger(E val)
-    {
-        E[] vals = (E[]) val.getClass().getEnumConstants();
-    	for (int idx = 0; idx < vals.length; idx++)
-    	{
-    		if (vals[idx] == val)
-    			return idx;
-    	}
-    	
-    	throw new IllegalArgumentException();
-    }
-    
-    public static <E extends Enum<E>> E fromInteger(int idx, Class<E> clazz)
-    {
-    	if (idx == EnumConverter.UNINITIALIZED)
-    		return null;
-    	
-    	E[] vals = clazz.getEnumConstants();
-    	return vals[idx];
-    }
-
 }
 
 

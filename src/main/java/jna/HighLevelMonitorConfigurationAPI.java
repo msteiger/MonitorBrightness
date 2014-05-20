@@ -17,6 +17,7 @@
 package jna;
 
 import jna.util.EnumConverter;
+import jna.util.EnumUtils;
 
 
 
@@ -235,7 +236,7 @@ public interface HighLevelMonitorConfigurationAPI
 	         * @param value the new value
 	         */
 	        public void setValue(MC_DISPLAY_TECHNOLOGY_TYPE value) {
-	            getPointer().setInt(0, EnumConverter.toInteger(value));
+	            getPointer().setInt(0, EnumUtils.toInteger(value));
 	        }
 
 	        /**
@@ -243,7 +244,7 @@ public interface HighLevelMonitorConfigurationAPI
 	         * @return the value
 	         */
 	        public MC_DISPLAY_TECHNOLOGY_TYPE getValue() {
-				return EnumConverter.fromInteger(getPointer().getInt(0), MC_DISPLAY_TECHNOLOGY_TYPE.class);
+				return EnumUtils.fromInteger(getPointer().getInt(0), MC_DISPLAY_TECHNOLOGY_TYPE.class);
 	        }
 	    }
 	}
@@ -401,7 +402,7 @@ public interface HighLevelMonitorConfigurationAPI
 	         * @param value the new value
 	         */
 	        public void setValue(MC_COLOR_TEMPERATURE value) {
-	            getPointer().setInt(0, EnumConverter.toInteger(value));
+	            getPointer().setInt(0, EnumUtils.toInteger(value));
 	        }
 
 	        /**
@@ -409,7 +410,7 @@ public interface HighLevelMonitorConfigurationAPI
 	         * @return the value
 	         */
 	        public MC_COLOR_TEMPERATURE getValue() {
-				return EnumConverter.fromInteger(getPointer().getInt(0), MC_COLOR_TEMPERATURE.class);
+				return EnumUtils.fromInteger(getPointer().getInt(0), MC_COLOR_TEMPERATURE.class);
 	        }
 	    }	    
 	}

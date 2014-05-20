@@ -3,7 +3,7 @@ package jna;
 import java.util.Arrays;
 import java.util.List;
 
-import jna.util.EnumConverter;
+import jna.util.EnumUtils;
 
 import com.sun.jna.Structure;
 import com.sun.jna.platform.win32.WinDef.BYTE;
@@ -85,7 +85,7 @@ public interface LowLevelMonitorConfigurationAPI
 	         * @param value the new value
 	         */
 	        public void setValue(MC_VCP_CODE_TYPE value) {
-	            getPointer().setInt(0, EnumConverter.toInteger(value));
+	            getPointer().setInt(0, EnumUtils.toInteger(value));
 	        }
 
 	        /**
@@ -93,7 +93,7 @@ public interface LowLevelMonitorConfigurationAPI
 	         * @return the value
 	         */
 	        public MC_VCP_CODE_TYPE getValue() {
-	            return EnumConverter.fromInteger(getPointer().getInt(0), MC_VCP_CODE_TYPE.class);
+	            return EnumUtils.fromInteger(getPointer().getInt(0), MC_VCP_CODE_TYPE.class);
 	        }
 	    }
 	}

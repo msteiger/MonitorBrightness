@@ -32,7 +32,9 @@ import jna.MyUser32;
 import jna.MyWinUser.HMONITOR;
 import jna.MyWinUser.MONITORENUMPROC;
 import jna.MyWinUser.MONITORINFOEX;
+import jna.PhysicalMonitorEnumerationAPI;
 import jna.PhysicalMonitorEnumerationAPI.PHYSICAL_MONITOR;
+import jna.util.EnumUtils;
 
 import com.sun.jna.Memory;
 import com.sun.jna.platform.win32.Kernel32;
@@ -108,9 +110,9 @@ public class MyMain
 		System.out.println("TECHTYPE: " + techType.getValue());
 	
 		DWORDByReference temps = new DWORDByReference();
-		EnumSet<HighLevelMonitorConfigurationAPI.MC_CAPS> caps = EnumSet.noneOf(HighLevelMonitorConfigurationAPI.MC_CAPS.class);
+		DWORDByReference caps = new DWORDByReference();
 		Dxva2.INSTANCE.GetMonitorCapabilities(hPhysicalMonitor, caps, temps);
-		System.out.println("CAPS " + caps);
+		System.out.println("CAPS " + EnumUtils.fromInteger(caps.getValue().intValue(), HighLevelMonitorConfigurationAPI.MC_CAPS.class));
 		System.out.println("Temps " + temps.getValue());
 		
 		// Brightness
