@@ -23,18 +23,18 @@ public interface LowLevelMonitorConfigurationAPI
 		/**
 		 * The monitor's horizontal synchronization frequency in Hz.
 		 */
-	    DWORD dwHorizontalFrequencyInHZ;
+	    public DWORD dwHorizontalFrequencyInHZ;
 	    
 	    /**
 	     * The monitor's vertical synchronization frequency in Hz.
 	     */
-	    DWORD dwVerticalFrequencyInHZ;
+	    public DWORD dwVerticalFrequencyInHZ;
 	    
 	    /**
 	     * Timing status byte. For more information about this value, see the Display Data Channel Command 
 	     * Interface (DDC/CI) standard.
 	     */
-	    BYTE bTimingStatusByte;
+	    public BYTE bTimingStatusByte;
 		
 	    @Override
 		protected List<String> getFieldOrder()

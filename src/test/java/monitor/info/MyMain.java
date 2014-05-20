@@ -17,6 +17,13 @@
 package monitor.info;
 
 import jna.Dxva2;
+import jna.HighLevelMonitorConfigurationAPI.MC_COLOR_TEMPERATURE;
+import jna.HighLevelMonitorConfigurationAPI.MC_DRIVE_TYPE;
+import jna.HighLevelMonitorConfigurationAPI.MC_GAIN_TYPE;
+import jna.HighLevelMonitorConfigurationAPI.MC_POSITION_TYPE;
+import jna.HighLevelMonitorConfigurationAPI.MC_SIZE_TYPE;
+import jna.LowLevelMonitorConfigurationAPI.MC_TIMING_REPORT;
+import jna.MyWinUser;
 import jna.HighLevelMonitorConfigurationAPI.MC_DISPLAY_TECHNOLOGY_TYPE;
 import jna.MyUser32;
 import jna.MyWinUser.HMONITOR;
@@ -24,78 +31,170 @@ import jna.MyWinUser.MONITORENUMPROC;
 import jna.MyWinUser.MONITORINFOEX;
 import jna.PhysicalMonitorEnumerationAPI.PHYSICAL_MONITOR;
 
+import com.sun.jna.Memory;
 import com.sun.jna.platform.win32.Kernel32;
 import com.sun.jna.platform.win32.User32;
+import com.sun.jna.platform.win32.WTypes.LPSTR;
 import com.sun.jna.platform.win32.Win32Exception;
 import com.sun.jna.platform.win32.WinDef.BOOL;
+import com.sun.jna.platform.win32.WinDef.CHAR;
+import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.DWORDByReference;
 import com.sun.jna.platform.win32.WinDef.HDC;
 import com.sun.jna.platform.win32.WinDef.LPARAM;
 import com.sun.jna.platform.win32.WinDef.RECT;
+import com.sun.jna.platform.win32.WinNT.HANDLE;
+import com.sun.jna.ptr.PointerByReference;
 
 public class MyMain
 {
 	public static void main(String[] args)
 	{
-		System.out.println("Monitors: " + User32.INSTANCE.GetSystemMetrics(User32.SM_CMONITORS));
+		System.out.println("Installed Physical Monitors: " + User32.INSTANCE.GetSystemMetrics(User32.SM_CMONITORS));
 		
 		MyUser32.INSTANCE.EnumDisplayMonitors(null, null, new MONITORENUMPROC() {
 
 			@Override
 			public int apply(HMONITOR hMonitor, HDC hdc, RECT rect, LPARAM lparam)
 			{
-				System.out.println("Monitor handle: " + hMonitor);
-
-				MONITORINFOEX info = new MONITORINFOEX();
-				MyUser32.INSTANCE.GetMonitorInfo(hMonitor, info);
-				System.out.println(info.rcMonitor);
-				
-				DWORDByReference pdwNumberOfPhysicalMonitors = new DWORDByReference();
-				Dxva2.INSTANCE.GetNumberOfPhysicalMonitorsFromHMONITOR(hMonitor, pdwNumberOfPhysicalMonitors);
-				int monitorCount = pdwNumberOfPhysicalMonitors.getValue().intValue();
-				
-				System.out.println("Physical monitors for " + hMonitor + ": " + monitorCount);
-				
-				PHYSICAL_MONITOR[] physMons = new PHYSICAL_MONITOR[monitorCount];
-				Dxva2.INSTANCE.GetPhysicalMonitorsFromHMONITOR(hMonitor, monitorCount, physMons);
-				
-				for (int i = 0; i < monitorCount; i++)
-				{
-					System.out.println(physMons[i].szPhysicalMonitorDescription);
-				
-//					IntByReference techType = new IntByReference();
-					MC_DISPLAY_TECHNOLOGY_TYPE.ByReference techType = new MC_DISPLAY_TECHNOLOGY_TYPE.ByReference();
-					BOOL ret = Dxva2.INSTANCE.GetMonitorTechnologyType(physMons[0].hPhysicalMonitor, techType);
-					System.out.println(ret);
-					System.out.println("TECHTYPE: " + techType.getValue());
-				
-					DWORDByReference caps = new DWORDByReference();
-					DWORDByReference temps = new DWORDByReference();
-					ret = Dxva2.INSTANCE.GetMonitorCapabilities(physMons[0].hPhysicalMonitor, caps, temps);
-					System.out.println(caps.getValue());
-					System.out.println(temps.getValue());
-					
-					DWORDByReference pdwMinimumBrightness = new DWORDByReference();
-					DWORDByReference pdwCurrentBrightness = new DWORDByReference();
-					DWORDByReference pdwMaximumBrightness = new DWORDByReference();
-					ret = Dxva2.INSTANCE.GetMonitorBrightness(physMons[0].hPhysicalMonitor, pdwMinimumBrightness, pdwCurrentBrightness, pdwMaximumBrightness);
-					int err = Kernel32.INSTANCE.GetLastError();
-					if (err != 0)
-						throw new Win32Exception(err);
-					
-					System.out.println("ERROR " + err);
-					System.out.println("RETURN2 " + ret.intValue());
-					
-					System.out.println(pdwMinimumBrightness.getValue());
-					System.out.println(pdwCurrentBrightness.getValue());
-					System.out.println(pdwMaximumBrightness.getValue());
-				}
-				
-//				ret = dxvga.INSTANCE.SetMonitorBrightness(physMons[0].hPhysicalMonitor, pdwCurrentBrightness.getValue() + 5);
+				enumerate(hMonitor);
 
 				return 1;
 			}
 			
 		}, new LPARAM(0));
 	}
+
+	static void enumerate(HMONITOR hMonitor)
+	{
+		System.out.println("Found HMONITOR: " + hMonitor.getPointer().toString());
+
+		MONITORINFOEX info = new MONITORINFOEX();
+		MyUser32.INSTANCE.GetMonitorInfo(hMonitor, info);
+		System.out.println("Screen " + info.rcMonitor);
+		System.out.println("Work area " + info.rcWork);
+		boolean isPrimary = (info.dwFlags & MyWinUser.MONITORINFOF_PRIMARY) != 0;
+		System.out.println("Primary? " + (isPrimary ? "yes" : "no"));
+		System.out.println("Device " + new String(info.szDevice));
+		
+		DWORDByReference pdwNumberOfPhysicalMonitors = new DWORDByReference();
+		Dxva2.INSTANCE.GetNumberOfPhysicalMonitorsFromHMONITOR(hMonitor, pdwNumberOfPhysicalMonitors);
+		int monitorCount = pdwNumberOfPhysicalMonitors.getValue().intValue();
+		
+		System.out.println("HMONITOR is linked to " + monitorCount + " physical monitors");
+		
+		PHYSICAL_MONITOR[] physMons = new PHYSICAL_MONITOR[monitorCount];
+		Dxva2.INSTANCE.GetPhysicalMonitorsFromHMONITOR(hMonitor, monitorCount, physMons);
+		
+		for (int i = 0; i < monitorCount; i++)
+		{
+			HANDLE hPhysicalMonitor = physMons[0].hPhysicalMonitor;
+			System.out.println("Monitor " + i + " - " + new String(physMons[i].szPhysicalMonitorDescription));
+		
+			enumeratePhysicalMonitor(hPhysicalMonitor);
+		}
+	}
+
+	/**
+	 * @param hPhysicalMonitor
+	 */
+	private static void enumeratePhysicalMonitor(HANDLE hPhysicalMonitor)
+	{
+		MC_DISPLAY_TECHNOLOGY_TYPE.ByReference techType = new MC_DISPLAY_TECHNOLOGY_TYPE.ByReference();
+		Dxva2.INSTANCE.GetMonitorTechnologyType(hPhysicalMonitor, techType);
+		System.out.println("TECHTYPE: " + techType.getValue());
+	
+		DWORDByReference caps = new DWORDByReference();
+		DWORDByReference temps = new DWORDByReference();
+		Dxva2.INSTANCE.GetMonitorCapabilities(hPhysicalMonitor, caps, temps);
+		System.out.println("CAPS " + caps.getValue());
+		System.out.println("Temps " + temps.getValue());
+		
+		// Brightness
+		DWORDByReference pdwMinimumBrightness = new DWORDByReference();
+		DWORDByReference pdwCurrentBrightness = new DWORDByReference();
+		DWORDByReference pdwMaximumBrightness = new DWORDByReference();
+		Dxva2.INSTANCE.GetMonitorBrightness(hPhysicalMonitor, pdwMinimumBrightness, pdwCurrentBrightness, pdwMaximumBrightness);
+		
+		System.out.println("Brightness Min: " + pdwMinimumBrightness.getValue());
+		System.out.println("Brightness Current: " + pdwCurrentBrightness.getValue());
+		System.out.println("Brightness Max: " + pdwMaximumBrightness.getValue());
+
+		// Contrast
+		DWORDByReference pdwMinimumContrast = new DWORDByReference();
+		DWORDByReference pdwCurrentContrast = new DWORDByReference();
+		DWORDByReference pdwMaximumContrast = new DWORDByReference();
+		Dxva2.INSTANCE.GetMonitorContrast(hPhysicalMonitor, pdwMinimumContrast, pdwCurrentContrast, pdwMaximumContrast);
+		
+		System.out.println("Contrast Min: " + pdwMinimumContrast.getValue());
+		System.out.println("Contrast Current: " + pdwCurrentContrast.getValue());
+		System.out.println("Contrast Max: " + pdwMaximumContrast.getValue());
+	
+		// Temperature
+		MC_COLOR_TEMPERATURE.ByReference pctCurrentColorTemperature = new MC_COLOR_TEMPERATURE.ByReference();
+		Dxva2.INSTANCE.GetMonitorColorTemperature(hPhysicalMonitor, pctCurrentColorTemperature);
+		System.out.println("Current Temp: " + pctCurrentColorTemperature.getValue());
+
+		// Capabilities string
+		DWORDByReference pdwCapabilitiesStringLengthInCharacters = new DWORDByReference();
+		Dxva2.INSTANCE.GetCapabilitiesStringLength(hPhysicalMonitor, pdwCapabilitiesStringLengthInCharacters);
+		DWORD capStrLen = pdwCapabilitiesStringLengthInCharacters.getValue();
+
+		LPSTR capString = new LPSTR(new Memory(capStrLen.intValue() * 2));
+		Dxva2.INSTANCE.CapabilitiesRequestAndCapabilitiesReply(hPhysicalMonitor, capString, capStrLen);
+		System.out.println("Cap-String:" + capString.getValue());
+
+		// Position
+		MC_POSITION_TYPE ptPositionType = MC_POSITION_TYPE.MC_HORIZONTAL_POSITION;
+		DWORDByReference pdwMinimumPosition = new DWORDByReference();
+		DWORDByReference pdwCurrentPosition = new DWORDByReference();
+		DWORDByReference pdwMaximumPosition = new DWORDByReference();
+		Dxva2.INSTANCE.GetMonitorDisplayAreaPosition(hPhysicalMonitor, ptPositionType, pdwMinimumPosition, pdwCurrentPosition, pdwMaximumPosition);
+
+		System.out.println("Position (horz) Min: " + pdwMinimumPosition.getValue());
+		System.out.println("Position (horz) Current: " + pdwCurrentPosition.getValue());
+		System.out.println("Position (horz) Max: " + pdwMaximumPosition.getValue());
+		
+		// Size
+		MC_SIZE_TYPE ptSizeType = MC_SIZE_TYPE.MC_WIDTH;
+		DWORDByReference pdwMinimumSize = new DWORDByReference();
+		DWORDByReference pdwCurrentSize = new DWORDByReference();
+		DWORDByReference pdwMaximumSize = new DWORDByReference();
+		Dxva2.INSTANCE.GetMonitorDisplayAreaSize(hPhysicalMonitor, ptSizeType, pdwMinimumSize, pdwCurrentSize, pdwMaximumSize);
+
+		System.out.println("Width Min: " + pdwMinimumSize.getValue());
+		System.out.println("Width Current: " + pdwCurrentSize.getValue());
+		System.out.println("Width Max: " + pdwMaximumSize.getValue());
+		
+		// Gain
+		MC_GAIN_TYPE ptGainType = MC_GAIN_TYPE.MC_RED_GAIN;
+		DWORDByReference pdwMinimumGain = new DWORDByReference();
+		DWORDByReference pdwCurrentGain = new DWORDByReference();
+		DWORDByReference pdwMaximumGain = new DWORDByReference();
+		Dxva2.INSTANCE.GetMonitorRedGreenOrBlueGain(hPhysicalMonitor, ptGainType, pdwMinimumGain, pdwCurrentGain, pdwMaximumGain);
+
+		System.out.println("Red Gain Min: " + pdwMinimumSize.getValue());
+		System.out.println("Red Gain Current: " + pdwCurrentSize.getValue());
+		System.out.println("Red Gain Max: " + pdwMaximumSize.getValue());
+		
+		// Drive
+		MC_DRIVE_TYPE ptDriveType = MC_DRIVE_TYPE.MC_RED_DRIVE;
+		DWORDByReference pdwMinimumDrive = new DWORDByReference();
+		DWORDByReference pdwCurrentDrive = new DWORDByReference();
+		DWORDByReference pdwMaximumDrive = new DWORDByReference();
+		Dxva2.INSTANCE.GetMonitorRedGreenOrBlueDrive(hPhysicalMonitor, ptDriveType, pdwMinimumDrive, pdwCurrentDrive, pdwMaximumDrive);
+
+		System.out.println("Red Drive Min: " + pdwMinimumSize.getValue());
+		System.out.println("Red Drive Current: " + pdwCurrentSize.getValue());
+		System.out.println("Red Drive Max: " + pdwMaximumSize.getValue());
+
+		// Timing Report
+		MC_TIMING_REPORT pmtrMonitorTimingReport = new MC_TIMING_REPORT();
+		Dxva2.INSTANCE.GetTimingReport(hPhysicalMonitor, pmtrMonitorTimingReport);
+		System.out.println("HorizontalFrequencyInHZ " + pmtrMonitorTimingReport.dwHorizontalFrequencyInHZ);
+		System.out.println("VerticalFrequencyInHZ " + pmtrMonitorTimingReport.dwVerticalFrequencyInHZ);
+		
+		System.out.println("--------------------------------------");
+	}
+	
 }

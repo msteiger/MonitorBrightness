@@ -356,7 +356,45 @@ public interface HighLevelMonitorConfigurationAPI
 	    /**
 	     * 11,500 kelvins (K). 
 	     */
-	    MC_COLOR_TEMPERATURE_11500K
+	    MC_COLOR_TEMPERATURE_11500K;
 	    
+	    /**
+	     * Defines a Reference to the enum
+	     */
+	    public static class ByReference extends com.sun.jna.ptr.ByReference {
+
+	    	/**
+	    	 * Create an uninitialized reference
+	    	 */
+	    	public ByReference() {
+	    		super(4);
+	    		getPointer().setInt(0, EnumConverter.UNINITIALIZED);
+	    	}
+	    	
+	        /**
+	         * Instantiates a new reference.
+	         * @param value the value
+	         */
+	        public ByReference(MC_COLOR_TEMPERATURE value) {
+	            super(4);
+	            setValue(value);
+	        }
+
+	        /**
+	         * Sets the value.
+	         * @param value the new value
+	         */
+	        public void setValue(MC_COLOR_TEMPERATURE value) {
+	            getPointer().setInt(0, EnumConverter.toInteger(value));
+	        }
+
+	        /**
+	         * Gets the value.
+	         * @return the value
+	         */
+	        public MC_COLOR_TEMPERATURE getValue() {
+				return EnumConverter.fromInteger(getPointer().getInt(0), MC_COLOR_TEMPERATURE.class);
+	        }
+	    }	    
 	}
 }

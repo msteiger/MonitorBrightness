@@ -19,6 +19,7 @@ package jna;
 import java.util.HashMap;
 
 import jna.MyWinUser.HMONITOR;
+import jna.util.EnumConverter;
 
 import com.sun.jna.DefaultTypeMapper;
 import com.sun.jna.Library;
@@ -35,8 +36,11 @@ public interface Dxva2 extends StdCallLibrary, PhysicalMonitorEnumerationAPI, Hi
 {
 	DefaultTypeMapper mapper = new DefaultTypeMapper() {
 		   {
-		        // The EnumConverter is set to fire when instances of our interface are seen.
-//		        addTypeConverter(MC_DISPLAY_TECHNOLOGY_TYPE.class, new EnumConverter<>(MC_DISPLAY_TECHNOLOGY_TYPE.class));
+		        // The EnumConverter is set to fire when instances of our interfaces are seen.
+		        addTypeConverter(MC_POSITION_TYPE.class, new EnumConverter<>(MC_POSITION_TYPE.class));
+		        addTypeConverter(MC_SIZE_TYPE.class, new EnumConverter<>(MC_SIZE_TYPE.class));
+		        addTypeConverter(MC_GAIN_TYPE.class, new EnumConverter<>(MC_GAIN_TYPE.class));
+		        addTypeConverter(MC_DRIVE_TYPE.class, new EnumConverter<>(MC_DRIVE_TYPE.class));
 		   }};
 		   
 	Dxva2 INSTANCE = (Dxva2) 
@@ -136,7 +140,7 @@ public interface Dxva2 extends StdCallLibrary, PhysicalMonitorEnumerationAPI, Hi
 	 * @param pctCurrentColorTemperature Receives the monitor's current color temperature.
 	 * @return If the function succeeds, the return value is TRUE. If the function fails, the return value is FALSE
 	 */
-	BOOL GetMonitorColorTemperature(HANDLE hMonitor, MC_COLOR_TEMPERATURE pctCurrentColorTemperature);
+	BOOL GetMonitorColorTemperature(HANDLE hMonitor, MC_COLOR_TEMPERATURE.ByReference pctCurrentColorTemperature);
 
 	/**
 	 * Retrieves a monitor's red, green, or blue drive value.
