@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package monitor;
+package jna;
 
 import java.util.HashMap;
 
-import monitor.MyWinUser.HMONITOR;
+import jna.MyWinUser.HMONITOR;
 
 import com.sun.jna.DefaultTypeMapper;
 import com.sun.jna.Library;

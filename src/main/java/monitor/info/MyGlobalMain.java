@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package monitor;
+package monitor.info;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
 import javax.swing.JOptionPane;
+
+import control.App;
 
 public class MyGlobalMain
 {

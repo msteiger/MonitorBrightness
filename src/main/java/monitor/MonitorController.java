@@ -16,7 +16,10 @@
 
 package monitor;
 
-public class MonitorController
+import java.util.Collection;
+
+public interface MonitorController
 {
+	Collection<Monitor> getMonitors();
 
 }

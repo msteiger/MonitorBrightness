@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package monitor;
+package jna;
 
-import monitor.util.EnumConverter;
+import jna.util.EnumConverter;
+
 
 
 /**
@@ -29,6 +30,7 @@ public interface HighLevelMonitorConfigurationAPI
 	 * The monitor does not support any monitor settings.
 	 */
 	final int MC_CAPS_NONE =                                            0x00000000;
+	
 	/**
 	 * The monitor supports the GetMonitorTechnologyType function.
 	 */

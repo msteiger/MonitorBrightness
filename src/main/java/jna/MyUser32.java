@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package monitor;
+package jna;
 
-import monitor.MyWinUser.HMONITOR;
-import monitor.MyWinUser.MONITORENUMPROC;
-import monitor.MyWinUser.MONITORINFO;
-import monitor.MyWinUser.MONITORINFOEX;
+import jna.MyWinUser.HMONITOR;
+import jna.MyWinUser.MONITORENUMPROC;
+import jna.MyWinUser.MONITORINFO;
+import jna.MyWinUser.MONITORINFOEX;
 
 import com.sun.jna.Native;
 import com.sun.jna.platform.win32.WinDef.BOOL;

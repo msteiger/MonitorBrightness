@@ -16,13 +16,13 @@
 
 package monitor.info;
 
-import monitor.Dxva2;
-import monitor.HighLevelMonitorConfigurationAPI.MC_DISPLAY_TECHNOLOGY_TYPE;
-import monitor.MyUser32;
-import monitor.MyWinUser.HMONITOR;
-import monitor.MyWinUser.MONITORENUMPROC;
-import monitor.MyWinUser.MONITORINFOEX;
-import monitor.PhysicalMonitorEnumerationAPI.PHYSICAL_MONITOR;
+import jna.Dxva2;
+import jna.HighLevelMonitorConfigurationAPI.MC_DISPLAY_TECHNOLOGY_TYPE;
+import jna.MyUser32;
+import jna.MyWinUser.HMONITOR;
+import jna.MyWinUser.MONITORENUMPROC;
+import jna.MyWinUser.MONITORINFOEX;
+import jna.PhysicalMonitorEnumerationAPI.PHYSICAL_MONITOR;
 
 import com.sun.jna.platform.win32.Kernel32;
 import com.sun.jna.platform.win32.User32;
@@ -32,7 +32,6 @@ import com.sun.jna.platform.win32.WinDef.DWORDByReference;
 import com.sun.jna.platform.win32.WinDef.HDC;
 import com.sun.jna.platform.win32.WinDef.LPARAM;
 import com.sun.jna.platform.win32.WinDef.RECT;
-import com.sun.jna.ptr.IntByReference;
 
 public class MyMain
 {

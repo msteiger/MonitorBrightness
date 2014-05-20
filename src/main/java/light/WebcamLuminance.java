@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package monitor;
+package light;
 
 import java.awt.image.BufferedImage;
 

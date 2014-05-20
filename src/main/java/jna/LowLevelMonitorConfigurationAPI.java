@@ -1,9 +1,9 @@
-package monitor;
+package jna;
 
 import java.util.Arrays;
 import java.util.List;
 
-import monitor.util.EnumConverter;
+import jna.util.EnumConverter;
 
 import com.sun.jna.Structure;
 import com.sun.jna.platform.win32.WinDef.BYTE;

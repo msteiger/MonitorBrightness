@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package monitor;
+package control;
 
 import java.awt.AWTException;
-import java.awt.CheckboxMenuItem;
 import java.awt.Component;
 import java.awt.MenuItem;
 import java.awt.PopupMenu;
@@ -28,18 +27,24 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.net.URL;
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.imageio.ImageIO;
-import javax.swing.JOptionPane;
+
+import light.LuminanceProvider;
+import light.WebcamLuminance;
+import monitor.Monitor;
+import monitor.MonitorController;
+import monitor.jna.MonitorControllerJna;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Maps;
 
 public class App implements AutoCloseable
 {
@@ -49,15 +54,26 @@ public class App implements AutoCloseable
 	private Thread thread;
 	
 	private static final int QUEUE_LENGTH = 10;
+
+	/**
+	 * Minium time between two brightness change events in seconds
+	 */
+	private static final double MAX_CHANGE_FREQ = 10;
+	
+	/**
+	 * Brightness will be changed only if difference is large enough
+	 */
+	private static final double MIN_BRIGHTNESS_CHANGE_DELTA = 5;
+	
 	final Deque<Integer> avgLuminances = new ArrayDeque<Integer>(QUEUE_LENGTH);
 
 	private final LuminanceProvider luminanceProvider = new WebcamLuminance();
-	private final MonitorController monitorControl = new MonitorController();
+	private final MonitorController monitorControl = new MonitorControllerJna();
 
 	final AtomicBoolean quit = new AtomicBoolean(false);
 
-	private BrightnessFunc control = new BrightnessFuncLinear();
-
+	private Map<Monitor, Integer> targetBrightnessMap = Maps.newHashMap();
+	
 	public App() throws AWTException, IOException
 	{
 		if (!SystemTray.isSupported())
@@ -90,7 +106,26 @@ public class App implements AutoCloseable
 				avgLum += lum.intValue();
 			}
 			
-			int desiredBrightness = control.convertLuminance(avgLum);
+			for (Monitor monitor : monitorControl.getMonitors())
+			{
+				int currentBrightness = monitor.getBrightness();
+				int desiredBrightness = monitor.convertLuminance(avgLum);
+				int brightnessDelta = desiredBrightness - currentBrightness;
+				
+				if (Math.abs(brightnessDelta) > MIN_BRIGHTNESS_CHANGE_DELTA)
+				{
+					targetBrightnessMap.put(monitor, desiredBrightness);
+				}
+				
+				int targetBrightness = targetBrightnessMap.get(monitor);
+
+				if (currentBrightness != targetBrightness)
+				{
+					int delta = Math.min(2, Math.max(-2, targetBrightness - currentBrightness));
+					
+					monitor.setBrightness(currentBrightness + delta);
+				}
+			}
 
 			try
 			{
@@ -105,20 +140,17 @@ public class App implements AutoCloseable
 	
 	private PopupMenu createPopup()
 	{
-		final MenuItem showAllMessages = new MenuItem("Luminance");
-
-		PopupMenu menu = new PopupMenu()
+		final MenuItem config = new MenuItem("Config");
+		config.addActionListener(new ActionListener()
 		{
-			private static final long serialVersionUID = -7973875279302827626L;
-
 			@Override
-			public void show(Component origin, int x, int y)
+			public void actionPerformed(ActionEvent e)
 			{
-				super.show(origin, x, y);
-
-				showAllMessages.setLabel(avgLuminances.toString());
+//				quit.set(true);
 			}
-		};
+		});
+
+		PopupMenu menu = new PopupMenu();
 
 		MenuItem quitItem = new MenuItem("Quit");
 		quitItem.addActionListener(new ActionListener()
@@ -130,7 +162,7 @@ public class App implements AutoCloseable
 			}
 		});
 		
-		menu.add(showAllMessages);
+		menu.add(config);
 		menu.addSeparator();
 		menu.add(quitItem);
 		return menu;
@@ -140,7 +172,7 @@ public class App implements AutoCloseable
 	private static BufferedImage loadImage(String fname) throws IOException
 	{
 		String fullPath = "/" + fname;
-		URL rsc = MyMain.class.getResource(fullPath);
+		URL rsc = App.class.getResource(fullPath);
 		if (rsc == null)
 		{
 			throw new FileNotFoundException(fullPath);

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package monitor;
+package jna;
 
 import java.util.Arrays;
 import java.util.List;

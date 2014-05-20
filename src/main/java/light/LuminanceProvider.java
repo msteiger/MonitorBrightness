@@ -14,10 +14,16 @@
  * limitations under the License.
  */
 
-package monitor;
+package light;
 
-public interface BrightnessFunc
+/**
+ * Provides information about environmental luminance
+ * @author Martin Steiger
+ */
+public interface LuminanceProvider extends AutoCloseable
 {
-	int convertLuminance(int avgLum);
-
+	/**
+	 * @return the luminance in [0..255]
+	 */
+	int getLuminance();
 }
