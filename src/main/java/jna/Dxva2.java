@@ -16,10 +16,12 @@
 
 package jna;
 
+import java.util.EnumSet;
 import java.util.HashMap;
 
 import jna.MyWinUser.HMONITOR;
 import jna.util.EnumConverter;
+import jna.util.EnumSetConverter;
 
 import com.sun.jna.DefaultTypeMapper;
 import com.sun.jna.Library;
@@ -41,6 +43,8 @@ public interface Dxva2 extends StdCallLibrary, PhysicalMonitorEnumerationAPI, Hi
 		        addTypeConverter(MC_SIZE_TYPE.class, new EnumConverter<>(MC_SIZE_TYPE.class));
 		        addTypeConverter(MC_GAIN_TYPE.class, new EnumConverter<>(MC_GAIN_TYPE.class));
 		        addTypeConverter(MC_DRIVE_TYPE.class, new EnumConverter<>(MC_DRIVE_TYPE.class));
+
+		        addTypeConverter(EnumSet.class, new EnumSetConverter());
 		   }};
 		   
 	Dxva2 INSTANCE = (Dxva2) 
@@ -68,7 +72,7 @@ public interface Dxva2 extends StdCallLibrary, PhysicalMonitorEnumerationAPI, Hi
 	 *        <br/><br/>
 	 *        The function fails if the monitor does not support DDC/CI.
 	 */
-	BOOL GetMonitorCapabilities(HANDLE hMonitor, DWORDByReference pdwMonitorCapabilities, DWORDByReference pdwSupportedColorTemperatures);
+	BOOL GetMonitorCapabilities(HANDLE hMonitor, EnumSet<MC_CAPS> pdwMonitorCapabilities, DWORDByReference pdwSupportedColorTemperatures);
 
 	/******************************************************************************
 	    Monitor setting persistence functions 

@@ -16,7 +16,10 @@
 
 package monitor.info;
 
+import java.util.EnumSet;
+
 import jna.Dxva2;
+import jna.HighLevelMonitorConfigurationAPI;
 import jna.HighLevelMonitorConfigurationAPI.MC_COLOR_TEMPERATURE;
 import jna.HighLevelMonitorConfigurationAPI.MC_DRIVE_TYPE;
 import jna.HighLevelMonitorConfigurationAPI.MC_GAIN_TYPE;
@@ -104,10 +107,10 @@ public class MyMain
 		Dxva2.INSTANCE.GetMonitorTechnologyType(hPhysicalMonitor, techType);
 		System.out.println("TECHTYPE: " + techType.getValue());
 	
-		DWORDByReference caps = new DWORDByReference();
 		DWORDByReference temps = new DWORDByReference();
+		EnumSet<HighLevelMonitorConfigurationAPI.MC_CAPS> caps = EnumSet.noneOf(HighLevelMonitorConfigurationAPI.MC_CAPS.class);
 		Dxva2.INSTANCE.GetMonitorCapabilities(hPhysicalMonitor, caps, temps);
-		System.out.println("CAPS " + caps.getValue());
+		System.out.println("CAPS " + caps);
 		System.out.println("Temps " + temps.getValue());
 		
 		// Brightness

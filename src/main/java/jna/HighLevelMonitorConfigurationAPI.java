@@ -26,65 +26,81 @@ import jna.util.EnumConverter;
  */
 public interface HighLevelMonitorConfigurationAPI
 {
-	/**
-	 * The monitor does not support any monitor settings.
-	 */
-	final int MC_CAPS_NONE =                                            0x00000000;
+	enum MC_CAPS implements FlagEnum
+	{
+		/**
+		 * The monitor does not support any monitor settings.
+		 */
+		MC_CAPS_NONE (                                            0x00000000),
+		
+		/**
+		 * The monitor supports the GetMonitorTechnologyType function.
+		 */
+		MC_CAPS_MONITOR_TECHNOLOGY_TYPE (                         0x00000001),
+		
+		/**
+		 * The monitor supports the GetMonitorBrightness and SetMonitorBrightness functions.
+		 */
+		MC_CAPS_BRIGHTNESS (                                      0x00000002),
+		
+		/**
+		 * The monitor supports the GetMonitorContrast and SetMonitorContrast functions.
+		 */
+		MC_CAPS_CONTRAST (                                        0x00000004),
+		
+		/**
+		 * The monitor supports the GetMonitorColorTemperature and SetMonitorColorTemperature functions.
+		 */
+		MC_CAPS_COLOR_TEMPERATURE (                               0x00000008),
+		
+		/**
+		 * The monitor supports the GetMonitorRedGreenOrBlueGain and SetMonitorRedGreenOrBlueGain functions.
+		 */
+		MC_CAPS_RED_GREEN_BLUE_GAIN (                             0x00000010),
+		
+		/**
+		 * The monitor supports the GetMonitorRedGreenOrBlueDrive and SetMonitorRedGreenOrBlueDrive functions.
+		 */
+		MC_CAPS_RED_GREEN_BLUE_DRIVE (                            0x00000020),
+		
+		/**
+		 * The monitor supports the DegaussMonitor function.
+		 */
+		MC_CAPS_DEGAUSS (                                         0x00000040),
+		
+		/**
+		 * The monitor supports the GetMonitorDisplayAreaPosition and SetMonitorDisplayAreaPosition functions.
+		 */
+		MC_CAPS_DISPLAY_AREA_POSITION (                           0x00000080),
+		
+		/**
+		 * The monitor supports the GetMonitorDisplayAreaSize and SetMonitorDisplayAreaSize functions.
+		 */
+		MC_CAPS_DISPLAY_AREA_SIZE (                               0x00000100),
+		
+		/**
+		 * The monitor supports the RestoreMonitorFactoryDefaults function.
+		 */
+		MC_CAPS_RESTORE_FACTORY_DEFAULTS (                        0x00000400),
 	
-	/**
-	 * The monitor supports the GetMonitorTechnologyType function.
-	 */
-	final int MC_CAPS_MONITOR_TECHNOLOGY_TYPE =                         0x00000001;
-	
-	/**
-	 * The monitor supports the GetMonitorBrightness and SetMonitorBrightness functions.
-	 */
-	final int MC_CAPS_BRIGHTNESS =                                      0x00000002;
-	
-	/**
-	 * The monitor supports the GetMonitorContrast and SetMonitorContrast functions.
-	 */
-	final int MC_CAPS_CONTRAST =                                        0x00000004;
-	
-	/**
-	 * The monitor supports the GetMonitorColorTemperature and SetMonitorColorTemperature functions.
-	 */
-	final int MC_CAPS_COLOR_TEMPERATURE =                               0x00000008;
-	
-	/**
-	 * The monitor supports the GetMonitorRedGreenOrBlueGain and SetMonitorRedGreenOrBlueGain functions.
-	 */
-	final int MC_CAPS_RED_GREEN_BLUE_GAIN =                             0x00000010;
-	
-	/**
-	 * The monitor supports the GetMonitorRedGreenOrBlueDrive and SetMonitorRedGreenOrBlueDrive functions.
-	 */
-	final int MC_CAPS_RED_GREEN_BLUE_DRIVE =                            0x00000020;
-	
-	/**
-	 * The monitor supports the DegaussMonitor function.
-	 */
-	final int MC_CAPS_DEGAUSS =                                         0x00000040;
-	
-	/**
-	 * The monitor supports the GetMonitorDisplayAreaPosition and SetMonitorDisplayAreaPosition functions.
-	 */
-	final int MC_CAPS_DISPLAY_AREA_POSITION =                           0x00000080;
-	
-	/**
-	 * The monitor supports the GetMonitorDisplayAreaSize and SetMonitorDisplayAreaSize functions.
-	 */
-	final int MC_CAPS_DISPLAY_AREA_SIZE =                               0x00000100;
-	
-	/**
-	 * The monitor supports the RestoreMonitorFactoryDefaults function.
-	 */
-	final int MC_CAPS_RESTORE_FACTORY_DEFAULTS =                        0x00000400;
-
-	/**
-	 * The monitor supports the RestoreMonitorFactoryColorDefaults function.
-	 */
-	final int MC_CAPS_RESTORE_FACTORY_COLOR_DEFAULTS =                  0x00000800;
+		/**
+		 * The monitor supports the RestoreMonitorFactoryColorDefaults function.
+		 */
+		MC_CAPS_RESTORE_FACTORY_COLOR_DEFAULTS (                  0x00000800);
+		
+		private int flag;
+		
+		MC_CAPS(int flag)
+		{
+			this.flag = flag;
+		}
+		
+		@Override
+		public int getFlag()
+		{
+			return flag;
+		}
+	}
 	
 	/**
 	 * If this flag is present, calling the RestoreMonitorFactoryDefaults function enables all of 
