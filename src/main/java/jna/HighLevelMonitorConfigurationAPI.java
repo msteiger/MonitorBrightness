@@ -16,10 +16,7 @@
 
 package jna;
 
-import jna.util.EnumConverter;
 import jna.util.EnumUtils;
-
-
 
 /**
  * A conversion of HighLevelMonitorConfigurationAPI.h
@@ -27,68 +24,78 @@ import jna.util.EnumUtils;
  */
 public interface HighLevelMonitorConfigurationAPI
 {
+	/**
+	 * Monitor capabilities - retrieved by GetMonitorCapabilities
+	 */
 	enum MC_CAPS implements FlagEnum
 	{
 		/**
 		 * The monitor does not support any monitor settings.
 		 */
-		MC_CAPS_NONE (                                            0x00000000),
+		MC_CAPS_NONE                                             (0x00000000),
 		
 		/**
 		 * The monitor supports the GetMonitorTechnologyType function.
 		 */
-		MC_CAPS_MONITOR_TECHNOLOGY_TYPE (                         0x00000001),
+		MC_CAPS_MONITOR_TECHNOLOGY_TYPE                          (0x00000001),
 		
 		/**
 		 * The monitor supports the GetMonitorBrightness and SetMonitorBrightness functions.
 		 */
-		MC_CAPS_BRIGHTNESS (                                      0x00000002),
+		MC_CAPS_BRIGHTNESS                                       (0x00000002),
 		
 		/**
 		 * The monitor supports the GetMonitorContrast and SetMonitorContrast functions.
 		 */
-		MC_CAPS_CONTRAST (                                        0x00000004),
+		MC_CAPS_CONTRAST                                         (0x00000004),
 		
 		/**
 		 * The monitor supports the GetMonitorColorTemperature and SetMonitorColorTemperature functions.
 		 */
-		MC_CAPS_COLOR_TEMPERATURE (                               0x00000008),
+		MC_CAPS_COLOR_TEMPERATURE                                (0x00000008),
 		
 		/**
 		 * The monitor supports the GetMonitorRedGreenOrBlueGain and SetMonitorRedGreenOrBlueGain functions.
 		 */
-		MC_CAPS_RED_GREEN_BLUE_GAIN (                             0x00000010),
+		MC_CAPS_RED_GREEN_BLUE_GAIN                              (0x00000010),
 		
 		/**
 		 * The monitor supports the GetMonitorRedGreenOrBlueDrive and SetMonitorRedGreenOrBlueDrive functions.
 		 */
-		MC_CAPS_RED_GREEN_BLUE_DRIVE (                            0x00000020),
+		MC_CAPS_RED_GREEN_BLUE_DRIVE                             (0x00000020),
 		
 		/**
 		 * The monitor supports the DegaussMonitor function.
 		 */
-		MC_CAPS_DEGAUSS (                                         0x00000040),
+		MC_CAPS_DEGAUSS                                          (0x00000040),
 		
 		/**
 		 * The monitor supports the GetMonitorDisplayAreaPosition and SetMonitorDisplayAreaPosition functions.
 		 */
-		MC_CAPS_DISPLAY_AREA_POSITION (                           0x00000080),
+		MC_CAPS_DISPLAY_AREA_POSITION                            (0x00000080),
 		
 		/**
 		 * The monitor supports the GetMonitorDisplayAreaSize and SetMonitorDisplayAreaSize functions.
 		 */
-		MC_CAPS_DISPLAY_AREA_SIZE (                               0x00000100),
+		MC_CAPS_DISPLAY_AREA_SIZE                                (0x00000100),
 		
 		/**
 		 * The monitor supports the RestoreMonitorFactoryDefaults function.
 		 */
-		MC_CAPS_RESTORE_FACTORY_DEFAULTS (                        0x00000400),
+		MC_CAPS_RESTORE_FACTORY_DEFAULTS                         (0x00000400),
 	
 		/**
 		 * The monitor supports the RestoreMonitorFactoryColorDefaults function.
 		 */
-		MC_CAPS_RESTORE_FACTORY_COLOR_DEFAULTS (                  0x00000800);
+		MC_CAPS_RESTORE_FACTORY_COLOR_DEFAULTS                   (0x00000800),
 		
+		/**
+		 * If this flag is present, calling the RestoreMonitorFactoryDefaults function enables all of 
+		 * the monitor settings used by the high-level monitor configuration functions. For more 
+		 * information, see the Remarks section in RestoreMonitorFactoryDefaults.
+		 */
+		MC_RESTORE_FACTORY_DEFAULTS_ENABLES_MONITOR_SETTINGS     (0x00001000);         
+
 		private int flag;
 		
 		MC_CAPS(int flag)
@@ -104,57 +111,69 @@ public interface HighLevelMonitorConfigurationAPI
 	}
 	
 	/**
-	 * If this flag is present, calling the RestoreMonitorFactoryDefaults function enables all of 
-	 * the monitor settings used by the high-level monitor configuration functions. For more 
-	 * information, see the Remarks section in RestoreMonitorFactoryDefaults.
+	 * Monitor capabilities - retrieved by GetMonitorCapabilities
 	 */
-	final int MC_RESTORE_FACTORY_DEFAULTS_ENABLES_MONITOR_SETTINGS =    0x00001000;         
+	enum MC_SUPPORTED_COLOR_TEMPERATURE implements FlagEnum
+	{
+		/**
+		 * No color temperatures are supported.
+		 */
+		MC_SUPPORTED_COLOR_TEMPERATURE_NONE                      (0x00000000),
+		
+		/**
+		 * The monitor supports 4,000 kelvins (K) color temperature.
+		 */
+		MC_SUPPORTED_COLOR_TEMPERATURE_4000K                     (0x00000001),
 	
-	/**
-	 * No color temperatures are supported.
-	 */
-	final int MC_SUPPORTED_COLOR_TEMPERATURE_NONE =                     0x00000000;
+		/**
+		 * The monitor supports 5,000 K color temperature.
+		 */
+		MC_SUPPORTED_COLOR_TEMPERATURE_5000K                     (0x00000002),
 	
-	/**
-	 * The monitor supports 4,000 kelvins (K) color temperature.
-	 */
-	final int MC_SUPPORTED_COLOR_TEMPERATURE_4000K =                    0x00000001;
-
-	/**
-	 * The monitor supports 5,000 K color temperature.
-	 */
-	final int MC_SUPPORTED_COLOR_TEMPERATURE_5000K =                    0x00000002;
-
-	/**
-	 * The monitor supports 6,500 K color temperature.
-	 */
-	final int MC_SUPPORTED_COLOR_TEMPERATURE_6500K =                    0x00000004;
-
-	/**
-	 * The monitor supports 7,500 K color temperature.
-	 */
-	final int MC_SUPPORTED_COLOR_TEMPERATURE_7500K =                    0x00000008;
-
-	/**
-	 * The monitor supports 8,200 K color temperature.
-	 */
-	final int MC_SUPPORTED_COLOR_TEMPERATURE_8200K =                    0x00000010;
-
-	/**
-	 * The monitor supports 9,300 K color temperature.
-	 */
-	final int MC_SUPPORTED_COLOR_TEMPERATURE_9300K =                    0x00000020;
-
-	/**
-	 * The monitor supports 10,000 K color temperature.
-	 */
-	final int MC_SUPPORTED_COLOR_TEMPERATURE_10000K =                   0x00000040;
-
-	/**
-	 * The monitor supports 11,500 K color temperature.
-	 */
-	final int MC_SUPPORTED_COLOR_TEMPERATURE_11500K =                   0x00000080;
-
+		/**
+		 * The monitor supports 6,500 K color temperature.
+		 */
+		MC_SUPPORTED_COLOR_TEMPERATURE_6500K                     (0x00000004),
+	
+		/**
+		 * The monitor supports 7,500 K color temperature.
+		 */
+		MC_SUPPORTED_COLOR_TEMPERATURE_7500K                     (0x00000008),
+	
+		/**
+		 * The monitor supports 8,200 K color temperature.
+		 */
+		MC_SUPPORTED_COLOR_TEMPERATURE_8200K                     (0x00000010),
+	
+		/**
+		 * The monitor supports 9,300 K color temperature.
+		 */
+		MC_SUPPORTED_COLOR_TEMPERATURE_9300K                     (0x00000020),
+	
+		/**
+		 * The monitor supports 10,000 K color temperature.
+		 */
+		MC_SUPPORTED_COLOR_TEMPERATURE_10000K                    (0x00000040),
+	
+		/**
+		 * The monitor supports 11,500 K color temperature.
+		 */
+		MC_SUPPORTED_COLOR_TEMPERATURE_11500K                    (0x00000080);
+	
+		private int flag;
+		
+		MC_SUPPORTED_COLOR_TEMPERATURE(int flag)
+		{
+			this.flag = flag;
+		}
+		
+		@Override
+		public int getFlag()
+		{
+			return flag;
+		}
+	}
+	
 	// ******************************************************************************
 	//   Enumerations
 	// ******************************************************************************
@@ -219,7 +238,7 @@ public interface HighLevelMonitorConfigurationAPI
 	    	 */
 	    	public ByReference() {
 	    		super(4);
-	    		getPointer().setInt(0, EnumConverter.UNINITIALIZED);
+	    		getPointer().setInt(0, EnumUtils.UNINITIALIZED);
 	    	}
 	    	
 	        /**
@@ -385,7 +404,7 @@ public interface HighLevelMonitorConfigurationAPI
 	    	 */
 	    	public ByReference() {
 	    		super(4);
-	    		getPointer().setInt(0, EnumConverter.UNINITIALIZED);
+	    		getPointer().setInt(0, EnumUtils.UNINITIALIZED);
 	    	}
 	    	
 	        /**

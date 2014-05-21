@@ -16,21 +16,23 @@
 
 package jna.util;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.sun.jna.FromNativeContext;
 import com.sun.jna.ToNativeContext;
 import com.sun.jna.TypeConverter;
 
+/**
+ * A {@link TypeConverter} that maps an integer enum value to
+ * an actual Java enum.
+ * @param <T> the enum type
+ * @author Martin Steiger
+ */
 public class EnumConverter<T extends Enum<T>> implements TypeConverter {
 	 
-    private static final Logger logger = LoggerFactory.getLogger(EnumConverter.class);
-
-	public static final int UNINITIALIZED = -1;
-	
     private final Class<T> clazz;
  
+    /**
+     * @param clazz the enum class
+     */
     public EnumConverter(Class<T> clazz)
     {
     	this.clazz = clazz;
@@ -40,20 +42,6 @@ public class EnumConverter<T extends Enum<T>> implements TypeConverter {
 	public T fromNative(Object input, FromNativeContext context) {
         Integer i = (Integer) input;
         
-        Class<?> targetClass = context.getTargetType();
-        if (!clazz.isAssignableFrom(targetClass)) {
-            return null;
-        }
-        
-        Object[] enums = targetClass.getEnumConstants();
-        if (enums.length == 0) {
-            logger.error("Could not convert desired enum type (), no valid values are defined.",targetClass.getName());
-            return null;
-        }
-        // In order to avoid nasty reflective junk and to avoid needing
-        // to know about every subclass of JnaEnum, we retrieve the first
-        // element of the enum and make IT do the conversion for us.
-
         T[] vals = clazz.getEnumConstants();
         return vals[i];
     }

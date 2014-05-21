@@ -16,7 +16,6 @@
 
 package jna;
 
-import java.util.EnumSet;
 import java.util.HashMap;
 
 import jna.MyWinUser.HMONITOR;
@@ -33,23 +32,31 @@ import com.sun.jna.platform.win32.WinDef.DWORDByReference;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.win32.StdCallLibrary;
 
+/**
+ * A port of dxva2.dll
+ * @author Martin Steiger
+ */
 public interface Dxva2 extends StdCallLibrary, PhysicalMonitorEnumerationAPI, HighLevelMonitorConfigurationAPI, LowLevelMonitorConfigurationAPI
 {
-	DefaultTypeMapper mapper = new DefaultTypeMapper() {
-		   {
-		        // The EnumConverter is set to fire when instances of our interfaces are seen.
-		        addTypeConverter(MC_POSITION_TYPE.class, new EnumConverter<>(MC_POSITION_TYPE.class));
-		        addTypeConverter(MC_SIZE_TYPE.class, new EnumConverter<>(MC_SIZE_TYPE.class));
-		        addTypeConverter(MC_GAIN_TYPE.class, new EnumConverter<>(MC_GAIN_TYPE.class));
-		        addTypeConverter(MC_DRIVE_TYPE.class, new EnumConverter<>(MC_DRIVE_TYPE.class));
-		   }};
-		   
-	Dxva2 INSTANCE = (Dxva2) 
-			Native.loadLibrary("Dxva2", Dxva2.class, new HashMap<String, Object>() {
+	/**
+	 * The only instance of the library
+	 */
+	Dxva2 INSTANCE = (Dxva2) Native.loadLibrary("Dxva2", Dxva2.class, new HashMap<String, Object>() 
+		{
+			private static final long serialVersionUID = -1987971664975780480L;
+
+			{
+				put(Library.OPTION_TYPE_MAPPER, new DefaultTypeMapper() 
 				{
-					put(Library.OPTION_TYPE_MAPPER, mapper);
-				}
-			});
+					{
+				        addTypeConverter(MC_POSITION_TYPE.class, new EnumConverter<>(MC_POSITION_TYPE.class));
+				        addTypeConverter(MC_SIZE_TYPE.class, new EnumConverter<>(MC_SIZE_TYPE.class));
+				        addTypeConverter(MC_GAIN_TYPE.class, new EnumConverter<>(MC_GAIN_TYPE.class));
+				        addTypeConverter(MC_DRIVE_TYPE.class, new EnumConverter<>(MC_DRIVE_TYPE.class));
+					}
+				});
+			}
+		});
 	
 
 
