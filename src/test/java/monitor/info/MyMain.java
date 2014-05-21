@@ -112,7 +112,7 @@ public class MyMain
 		DWORDByReference temps = new DWORDByReference();
 		DWORDByReference caps = new DWORDByReference();
 		Dxva2.INSTANCE.GetMonitorCapabilities(hPhysicalMonitor, caps, temps);
-		System.out.println("CAPS " + EnumUtils.fromInteger(caps.getValue().intValue(), HighLevelMonitorConfigurationAPI.MC_CAPS.class));
+		System.out.println("CAPS " + EnumUtils.setFromInteger(caps.getValue().intValue(), HighLevelMonitorConfigurationAPI.MC_CAPS.class));
 		System.out.println("Temps " + temps.getValue());
 		
 		// Brightness
@@ -144,10 +144,10 @@ public class MyMain
 		DWORDByReference pdwCapabilitiesStringLengthInCharacters = new DWORDByReference();
 		Dxva2.INSTANCE.GetCapabilitiesStringLength(hPhysicalMonitor, pdwCapabilitiesStringLengthInCharacters);
 		DWORD capStrLen = pdwCapabilitiesStringLengthInCharacters.getValue();
-
-		LPSTR capString = new LPSTR(new Memory(capStrLen.intValue() * 2));
-		Dxva2.INSTANCE.CapabilitiesRequestAndCapabilitiesReply(hPhysicalMonitor, capString, capStrLen);
-		System.out.println("Cap-String:" + capString.getValue());
+		
+		LPSTR pszASCIICapabilitiesString = new LPSTR(new Memory(capStrLen.intValue()));
+		Dxva2.INSTANCE.CapabilitiesRequestAndCapabilitiesReply(hPhysicalMonitor, pszASCIICapabilitiesString, capStrLen);
+		System.out.println("Cap-String:" + new String(pszASCIICapabilitiesString.getPointer().getString(0)));
 
 		// Position
 		MC_POSITION_TYPE ptPositionType = MC_POSITION_TYPE.MC_HORIZONTAL_POSITION;
