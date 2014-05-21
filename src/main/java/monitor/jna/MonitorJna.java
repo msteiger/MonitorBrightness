@@ -35,6 +35,11 @@ public class MonitorJna implements Monitor, AutoCloseable
 	private final HANDLE handle;
 	private String name;
 
+	private int minBright;
+	private int maxBright;
+
+	private int curBright;
+	
 	/**
 	 * @param hPhysicalMonitor Handle to the physical monitor.
 	 * @param szPhysicalMonitorDescription 
@@ -43,13 +48,24 @@ public class MonitorJna implements Monitor, AutoCloseable
 	{
 		this.handle = hPhysicalMonitor;
 		this.name = szPhysicalMonitorDescription;
+
+		DWORDByReference minBrightness = new DWORDByReference();
+		DWORDByReference curBrightness = new DWORDByReference();
+		DWORDByReference maxBrightness = new DWORDByReference();
+		
+		check(Dxva2.INSTANCE.GetMonitorBrightness(handle, minBrightness, curBrightness, maxBrightness));
+		
+		minBright = minBrightness.getValue().intValue();
+		maxBright = maxBrightness.getValue().intValue();
+
+		curBright = curBrightness.getValue().intValue();
+		
 	}
 
 	@Override
 	public int convertLuminance(int avgLum)
 	{
-		// TODO Auto-generated method stub
-		return 0;
+		return minBright + avgLum * (maxBright - minBright) / 255;
 	}
 
 	@Override
@@ -59,22 +75,30 @@ public class MonitorJna implements Monitor, AutoCloseable
 		DWORDByReference curBrightness = new DWORDByReference();
 		DWORDByReference maxBrightness = new DWORDByReference();
 		
-		BOOL ret = Dxva2.INSTANCE.GetMonitorBrightness(handle, minBrightness, curBrightness, maxBrightness);
-		if (!ret.booleanValue())
+		check(Dxva2.INSTANCE.GetMonitorBrightness(handle, minBrightness, curBrightness, maxBrightness));
+		
+//		return curBright;
+		return curBrightness.getValue().intValue();
+	}
+	
+	private void check(BOOL retVal)
+	{
+		if (!retVal.booleanValue())
 		{
 			int err = Kernel32.INSTANCE.GetLastError();
 			if (err != 0)
 				throw new Win32Exception(err);
 		}
-		
-		return curBrightness.getValue().intValue();
 	}
 
 	@Override
 	public void setBrightness(int i)
 	{
 		logger.info("Setting brightness {} for monitor {}", i, name);
-		// TODO: implement
+		
+//		check(Dxva2.INSTANCE.SetMonitorBrightness(handle, i));
+		
+		curBright = i;
 	}
 
 	@Override

@@ -22,6 +22,7 @@ import java.awt.MenuItem;
 import java.awt.PopupMenu;
 import java.awt.SystemTray;
 import java.awt.TrayIcon;
+import java.awt.TrayIcon.MessageType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -91,6 +92,12 @@ public class App implements AutoCloseable
 
 	public void run()
 	{
+		for (Monitor monitor : monitorControl.getMonitors())
+		{
+			int currentBrightness = monitor.getBrightness();
+			targetBrightnessMap.put(monitor, currentBrightness);
+		}
+		
 		while (!quit.get())
 		{
 			if (avgLuminances.size() >= QUEUE_LENGTH)
@@ -106,6 +113,8 @@ public class App implements AutoCloseable
 				avgLum += lum.intValue();
 			}
 			
+			avgLum = avgLum / avgLuminances.size();
+			
 			for (Monitor monitor : monitorControl.getMonitors())
 			{
 				int currentBrightness = monitor.getBrightness();
@@ -115,6 +124,8 @@ public class App implements AutoCloseable
 				if (Math.abs(brightnessDelta) > MIN_BRIGHTNESS_CHANGE_DELTA)
 				{
 					targetBrightnessMap.put(monitor, desiredBrightness);
+					String infoText = "Adjusting brightness to " + desiredBrightness;
+					trayIcon.displayMessage("Monitor Brightness", infoText, MessageType.INFO);
 				}
 				
 				int targetBrightness = targetBrightnessMap.get(monitor);

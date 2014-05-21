@@ -9,6 +9,7 @@
 
 package monitor.jna;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -34,7 +35,7 @@ import monitor.MonitorController;
  */
 public class MonitorControllerJna implements MonitorController
 {
-	private Collection<Monitor> monitors;
+	final Collection<Monitor> monitors = new ArrayList<Monitor>();
 
 	public MonitorControllerJna()
 	{
