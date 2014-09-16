@@ -1,11 +1,18 @@
-// Fraunhofer Institute for Computer Graphics Research (IGD)
-// Department Information Visualization and Visual Analytics
-//
-// Copyright (c) Fraunhofer IGD. All rights reserved.
-//
-// This source code is property of the Fraunhofer IGD and underlies
-// copyright restrictions. It may only be used with explicit
-// permission from the respective owner.
+/*
+ * Copyright 2014 Martin Steiger
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package monitor.jna;
 
@@ -13,21 +20,19 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
-import jna.Dxva2;
-import jna.MyUser32;
-import jna.MyWinUser.HMONITOR;
-import jna.MyWinUser.MONITORENUMPROC;
-import jna.MyWinUser.MONITORINFOEX;
-import jna.PhysicalMonitorEnumerationAPI.PHYSICAL_MONITOR;
+import monitor.Monitor;
+import monitor.MonitorController;
 
+import com.sun.jna.platform.win32.Dxva2;
+import com.sun.jna.platform.win32.PhysicalMonitorEnumerationAPI.PHYSICAL_MONITOR;
 import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.WinDef.DWORDByReference;
 import com.sun.jna.platform.win32.WinDef.HDC;
 import com.sun.jna.platform.win32.WinDef.LPARAM;
 import com.sun.jna.platform.win32.WinDef.RECT;
-
-import monitor.Monitor;
-import monitor.MonitorController;
+import com.sun.jna.platform.win32.WinUser.HMONITOR;
+import com.sun.jna.platform.win32.WinUser.MONITORENUMPROC;
+import com.sun.jna.platform.win32.WinUser.MONITORINFOEX;
 
 /**
  * TODO Type description
@@ -41,7 +46,7 @@ public class MonitorControllerJna implements MonitorController
 	{
 		System.out.println("Monitors: " + User32.INSTANCE.GetSystemMetrics(User32.SM_CMONITORS));
 		
-		MyUser32.INSTANCE.EnumDisplayMonitors(null, null, new MONITORENUMPROC() {
+		User32.INSTANCE.EnumDisplayMonitors(null, null, new MONITORENUMPROC() {
 
 			@Override
 			public int apply(HMONITOR hMonitor, HDC hdc, RECT rect, LPARAM lparam)
@@ -49,7 +54,7 @@ public class MonitorControllerJna implements MonitorController
 				System.out.println("Monitor handle: " + hMonitor);
 
 				MONITORINFOEX info = new MONITORINFOEX();
-				MyUser32.INSTANCE.GetMonitorInfo(hMonitor, info);
+				User32.INSTANCE.GetMonitorInfo(hMonitor, info);
 				System.out.println(info.rcMonitor);
 				
 				DWORDByReference pdwNumberOfPhysicalMonitors = new DWORDByReference();

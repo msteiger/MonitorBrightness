@@ -16,48 +16,47 @@
 
 package monitor.info;
 
-import java.util.EnumSet;
-
-import jna.Dxva2;
-import jna.HighLevelMonitorConfigurationAPI;
-import jna.HighLevelMonitorConfigurationAPI.MC_COLOR_TEMPERATURE;
-import jna.HighLevelMonitorConfigurationAPI.MC_DRIVE_TYPE;
-import jna.HighLevelMonitorConfigurationAPI.MC_GAIN_TYPE;
-import jna.HighLevelMonitorConfigurationAPI.MC_POSITION_TYPE;
-import jna.HighLevelMonitorConfigurationAPI.MC_SIZE_TYPE;
-import jna.LowLevelMonitorConfigurationAPI.MC_TIMING_REPORT;
-import jna.MyWinUser;
-import jna.HighLevelMonitorConfigurationAPI.MC_DISPLAY_TECHNOLOGY_TYPE;
-import jna.MyUser32;
-import jna.MyWinUser.HMONITOR;
-import jna.MyWinUser.MONITORENUMPROC;
-import jna.MyWinUser.MONITORINFOEX;
-import jna.PhysicalMonitorEnumerationAPI;
-import jna.PhysicalMonitorEnumerationAPI.PHYSICAL_MONITOR;
-import jna.util.EnumUtils;
-
 import com.sun.jna.Memory;
-import com.sun.jna.platform.win32.Kernel32;
+import com.sun.jna.platform.EnumUtils;
+import com.sun.jna.platform.win32.Dxva2;
+import com.sun.jna.platform.win32.HighLevelMonitorConfigurationAPI;
+import com.sun.jna.platform.win32.HighLevelMonitorConfigurationAPI.MC_COLOR_TEMPERATURE;
+import com.sun.jna.platform.win32.HighLevelMonitorConfigurationAPI.MC_DISPLAY_TECHNOLOGY_TYPE;
+import com.sun.jna.platform.win32.HighLevelMonitorConfigurationAPI.MC_DRIVE_TYPE;
+import com.sun.jna.platform.win32.HighLevelMonitorConfigurationAPI.MC_GAIN_TYPE;
+import com.sun.jna.platform.win32.HighLevelMonitorConfigurationAPI.MC_POSITION_TYPE;
+import com.sun.jna.platform.win32.HighLevelMonitorConfigurationAPI.MC_SIZE_TYPE;
+import com.sun.jna.platform.win32.LowLevelMonitorConfigurationAPI.MC_TIMING_REPORT;
+import com.sun.jna.platform.win32.PhysicalMonitorEnumerationAPI.PHYSICAL_MONITOR;
 import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.WTypes.LPSTR;
-import com.sun.jna.platform.win32.Win32Exception;
-import com.sun.jna.platform.win32.WinDef.BOOL;
-import com.sun.jna.platform.win32.WinDef.CHAR;
 import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.DWORDByReference;
 import com.sun.jna.platform.win32.WinDef.HDC;
 import com.sun.jna.platform.win32.WinDef.LPARAM;
 import com.sun.jna.platform.win32.WinDef.RECT;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
-import com.sun.jna.ptr.PointerByReference;
+import com.sun.jna.platform.win32.WinUser;
+import com.sun.jna.platform.win32.WinUser.HMONITOR;
+import com.sun.jna.platform.win32.WinUser.MONITORENUMPROC;
+import com.sun.jna.platform.win32.WinUser.MONITORINFOEX;
 
-public class MyMain
+/**
+ * A small demo that tests the Win32 monitor API.
+ * All available physical and virtual monitors are enumerated and
+ * their capabilities printed to stdout
+ * @author Martin Steiger
+ */
+public class MonitorInfoDemo
 {
+	/**
+	 * @param args (ignored)
+	 */
 	public static void main(String[] args)
 	{
-		System.out.println("Installed Physical Monitors: " + User32.INSTANCE.GetSystemMetrics(User32.SM_CMONITORS));
+		System.out.println("Installed Physical Monitors: " + User32.INSTANCE.GetSystemMetrics(WinUser.SM_CMONITORS));
 		
-		MyUser32.INSTANCE.EnumDisplayMonitors(null, null, new MONITORENUMPROC() {
+		User32.INSTANCE.EnumDisplayMonitors(null, null, new MONITORENUMPROC() {
 
 			@Override
 			public int apply(HMONITOR hMonitor, HDC hdc, RECT rect, LPARAM lparam)
@@ -75,10 +74,10 @@ public class MyMain
 		System.out.println("Found HMONITOR: " + hMonitor.getPointer().toString());
 
 		MONITORINFOEX info = new MONITORINFOEX();
-		MyUser32.INSTANCE.GetMonitorInfo(hMonitor, info);
+		User32.INSTANCE.GetMonitorInfo(hMonitor, info);
 		System.out.println("Screen " + info.rcMonitor);
 		System.out.println("Work area " + info.rcWork);
-		boolean isPrimary = (info.dwFlags & MyWinUser.MONITORINFOF_PRIMARY) != 0;
+		boolean isPrimary = (info.dwFlags & WinUser.MONITORINFOF_PRIMARY) != 0;
 		System.out.println("Primary? " + (isPrimary ? "yes" : "no"));
 		System.out.println("Device " + new String(info.szDevice));
 		
