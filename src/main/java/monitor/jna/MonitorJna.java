@@ -96,7 +96,7 @@ public class MonitorJna implements Monitor, AutoCloseable
 	{
 		logger.info("Setting brightness {} for monitor {}", i, name);
 		
-//		check(Dxva2.INSTANCE.SetMonitorBrightness(handle, i));
+		check(Dxva2.INSTANCE.SetMonitorBrightness(handle, i));
 		
 		curBright = i;
 	}
@@ -105,6 +105,63 @@ public class MonitorJna implements Monitor, AutoCloseable
 	public void close() throws Exception
 	{
 		Dxva2.INSTANCE.DestroyPhysicalMonitor(handle);
+	}
+
+	@Override
+	public String getName() {
+		return name.trim();
+	}
+
+	
+	
+	//
+	
+	
+	@Override
+	public int getminBrightness()
+	{
+		DWORDByReference minBrightness = new DWORDByReference();
+		DWORDByReference curBrightness = new DWORDByReference();
+		DWORDByReference maxBrightness = new DWORDByReference();
+		
+		check(Dxva2.INSTANCE.GetMonitorBrightness(handle, minBrightness, curBrightness, maxBrightness));
+		
+//		return minBright;
+		return minBrightness.getValue().intValue();
+		
+	}
+
+	@Override
+	public int getmaxBrightness()
+	{
+		DWORDByReference minBrightness = new DWORDByReference();
+		DWORDByReference curBrightness = new DWORDByReference();
+		DWORDByReference maxBrightness = new DWORDByReference();
+		
+		check(Dxva2.INSTANCE.GetMonitorBrightness(handle, minBrightness, curBrightness, maxBrightness));
+		
+//		return maxBright;
+		return maxBrightness.getValue().intValue();
+	}
+
+	@Override
+	public void setminBrightness(int i)
+	{
+		logger.info("Setting minimum brightness {} for monitor {}", i, name);
+		
+		check(Dxva2.INSTANCE.SetMonitorBrightness(handle, i));
+		
+		minBright = i;
+	}
+
+	@Override
+	public void setmaxBrightness(int i)
+	{
+		logger.info("Setting maximum brightness {} for monitor {}", i, name);
+		
+		check(Dxva2.INSTANCE.SetMonitorBrightness(handle, i));
+		
+		maxBright = i;		
 	}
 
 }

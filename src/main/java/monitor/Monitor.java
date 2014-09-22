@@ -20,11 +20,16 @@ public interface Monitor
 	/**
 	 * @return
 	 */
+	int getminBrightness();
 	int getBrightness();
-
+	int getmaxBrightness();
 	/**
 	 * @param i
 	 */
+	void setminBrightness(int i);
 	void setBrightness(int i);
+	void setmaxBrightness(int i);
+
+	String getName();
 
 }
