@@ -22,6 +22,9 @@ import com.sun.jna.platform.win32.WinDef.BOOL;
 import com.sun.jna.platform.win32.WinDef.DWORDByReference;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 
+import java.awt.TrayIcon;
+import java.math.*;
+
 import monitor.Monitor;
 
 /**
@@ -95,8 +98,10 @@ public class MonitorJna implements Monitor, AutoCloseable
 	public void setBrightness(int i)
 	{
 		logger.info("Setting brightness {} for monitor {}", i, name);
-		
+
 		check(Dxva2.INSTANCE.SetMonitorBrightness(handle, i));
+		
+		System.out.println("Wurde aufgerufen");
 		
 		curBright = i;
 	}
@@ -120,48 +125,13 @@ public class MonitorJna implements Monitor, AutoCloseable
 	@Override
 	public int getminBrightness()
 	{
-		DWORDByReference minBrightness = new DWORDByReference();
-		DWORDByReference curBrightness = new DWORDByReference();
-		DWORDByReference maxBrightness = new DWORDByReference();
-		
-		check(Dxva2.INSTANCE.GetMonitorBrightness(handle, minBrightness, curBrightness, maxBrightness));
-		
-//		return minBright;
-		return minBrightness.getValue().intValue();
-		
+		return minBright;
 	}
 
 	@Override
 	public int getmaxBrightness()
 	{
-		DWORDByReference minBrightness = new DWORDByReference();
-		DWORDByReference curBrightness = new DWORDByReference();
-		DWORDByReference maxBrightness = new DWORDByReference();
-		
-		check(Dxva2.INSTANCE.GetMonitorBrightness(handle, minBrightness, curBrightness, maxBrightness));
-		
-//		return maxBright;
-		return maxBrightness.getValue().intValue();
-	}
-
-	@Override
-	public void setminBrightness(int i)
-	{
-		logger.info("Setting minimum brightness {} for monitor {}", i, name);
-		
-		check(Dxva2.INSTANCE.SetMonitorBrightness(handle, i));
-		
-		minBright = i;
-	}
-
-	@Override
-	public void setmaxBrightness(int i)
-	{
-		logger.info("Setting maximum brightness {} for monitor {}", i, name);
-		
-		check(Dxva2.INSTANCE.SetMonitorBrightness(handle, i));
-		
-		maxBright = i;		
+		return maxBright;
 	}
 
 }

@@ -26,9 +26,7 @@ public interface Monitor
 	/**
 	 * @param i
 	 */
-	void setminBrightness(int i);
 	void setBrightness(int i);
-	void setmaxBrightness(int i);
 
 	String getName();
 

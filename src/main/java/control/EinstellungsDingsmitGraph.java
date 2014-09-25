@@ -6,6 +6,7 @@ import java.awt.CheckboxMenuItem;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.MenuItem;
+import java.awt.Point;
 import java.awt.PopupMenu;
 import java.awt.SystemTray;
 import java.awt.TrayIcon;
@@ -28,6 +29,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JSlider;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.Timer;
 import javax.swing.border.EtchedBorder;
 import javax.swing.event.ChangeEvent;
@@ -40,7 +42,7 @@ import monitor.jna.MonitorControllerJna;
 import com.github.sarxos.webcam.Webcam;
 
 
-public class EinstellungsDingsFinal {
+public class EinstellungsDingsmitGraph {
 	
 	
 	public static void main(String[] args) throws IOException {
@@ -48,7 +50,25 @@ public class EinstellungsDingsFinal {
 		MonitorController monitorListe = new MonitorControllerJna();
 		
 		final JFrame frame = new JFrame(); 
-				
+		final JFrame frame2 = new JFrame(); 
+		
+		frame2.setTitle("Einstellen der Umwandlung Helligkeit des Raumes in Bildschirmhelligkeit");
+		frame2.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+		frame2.setLocation(100,200);
+		frame2.setLayout(new BorderLayout());
+		
+		final DrawPanel panel2 = new DrawPanel();
+		final Point point1 = panel2.getPoint1();
+		final Point point2 = panel2.getPoint2();
+
+		panel2.setPreferredSize(new Dimension(320,160));
+		panel2.setBorder(BorderFactory.createEmptyBorder(20 , 20 , 20 , 20));
+		frame2.add(panel2, BorderLayout.CENTER);
+		
+		//frame2.setSize(new Dimension(280,150));
+		frame2.pack();
+		frame2.setVisible(true);
+		
 		frame.setTitle("Bildschirmhelligkeit anpassen");
 		frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		frame.setLocation(500,200);
@@ -105,27 +125,30 @@ public class EinstellungsDingsFinal {
 					int camBright = timerListener.getBrightness();
 					int monBright = 0;
 					
-					if (camBright <  50)
+					if (camBright <  point1.x)
 					{
-						monBright = camBright;
+						//monBright = 100 - (((point1.y -100) / point1.x) * camBright + 100);
+						monBright = (int) (camBright * (100.0 - point1.y) / point1.x);
 					}
 
-					else if (camBright < 115)
+					else if (camBright < point2.x)
 					{
-						monBright = 50;
+						monBright = 100 - point1.y;
 					}
 					
 					else
 					{
-						int x = -25 / 11;
-						monBright = camBright * (5 / 11) + x ;
+						//monBright = 100 - ((0 - point2.y)/(255 - point2.x) * (camBright - point2.x) + point2.y);
+						monBright = (int) (100.0 - ((0.0 - point2.y)/(255.0 - point2.x) * (camBright - point2.x) + point2.y));
 					}
 											
 					//int monBright = mon.getminBrightness() + camBright * (mon.getmaxBrightness() - mon.getminBrightness()) / 255;
 					
 					int j = monBright - oldBright;
 					if (Math.abs(j) < 5)
+					{
 						return;
+					}
 					
 					mon.setBrightness(monBright);		
 					
@@ -198,6 +221,15 @@ public class EinstellungsDingsFinal {
 			}
 		});
 		
+		final MenuItem graph = new MenuItem("Graph anzeigen");
+		graph.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				frame2.setVisible(true);
+			}
+		});		
+		
 		MenuItem exitItem = new MenuItem("Exit");
 		exitItem.addActionListener(new ActionListener()
 		{
@@ -206,10 +238,12 @@ public class EinstellungsDingsFinal {
 				webcam.close();
 				tray.remove(trayIcon);
 				frame.dispose();
+				frame2.dispose();
 			}
 		});
 		
         popup.add(settings);
+        popup.add(graph);
 		popup.addSeparator();
 		popup.add(cb);
 		popup.addSeparator();
@@ -228,6 +262,11 @@ public class EinstellungsDingsFinal {
 		frame.setVisible(true);
 	}
 	
+	private static void repaint() {
+		// TODO Auto-generated method stub
+		
+	}
+
 	private static BufferedImage loadImage(String fname) throws IOException
 	{
 		String fullPath = "/" + fname;
