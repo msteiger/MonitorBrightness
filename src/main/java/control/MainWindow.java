@@ -17,10 +17,9 @@
 package control;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.awt.Point;
-import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -36,20 +35,25 @@ import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.Timer;
 import javax.swing.WindowConstants;
-import javax.swing.border.EtchedBorder;
+import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import light.BrightnessConverter;
 import light.WebcamWrapper;
 import monitor.Monitor;
-import monitor.MonitorController;
 
 public class MainWindow extends JFrame
 {
+	/**
+	 * Brightness will be changed only if difference is large enough
+	 */
+	private static final double MIN_BRIGHTNESS_CHANGE_DELTA = 5;
+
 	private final List<JCheckBox> list = new ArrayList<JCheckBox>();
 
-	private final JPanel rootPanel;
+	private final JPanel rightPanel;
 
 	private final WebcamWrapper webcamWrapper;
 
@@ -67,10 +71,16 @@ public class MainWindow extends JFrame
 		this.webcamWrapper = webcamWrapper;
 		BufferedImage firstImage = webcamWrapper.getImage();
 
+		JPanel left = new JPanel(new BorderLayout());
+		left.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		final ImageIcon imageIcon = new ImageIcon(firstImage);
-		final JLabel jLabel = new JLabel(imageIcon);
-		jLabel.setPreferredSize(new Dimension(firstImage.getWidth(), firstImage.getHeight()));
-		add(jLabel, BorderLayout.WEST);
+		final JLabel imageLabel = new JLabel(imageIcon);
+		imageLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		imageLabel.setPreferredSize(new Dimension(firstImage.getWidth(), firstImage.getHeight()));
+		left.add(imageLabel, BorderLayout.SOUTH);
+		final JLabel brightnessLabel = new JLabel();
+		left.add(brightnessLabel, BorderLayout.NORTH);
+		add(left, BorderLayout.WEST);
 
 		timer.addActionListener(new ActionListener()
 		{
@@ -81,13 +91,14 @@ public class MainWindow extends JFrame
 				if (image != null)
 				{
 					imageIcon.setImage(image);
-					jLabel.repaint();
+					imageLabel.repaint();
+					brightnessLabel.setText(webcamWrapper.getName() + " measured a brightness of " + webcamWrapper.getBrightness());
 				}
 			}
 		});
 
-		rootPanel = new JPanel(new GridLayout(0, 1));
-		add(rootPanel, BorderLayout.CENTER);
+		rightPanel = new JPanel(new GridLayout(0, 1, 10, 10));
+		add(rightPanel, BorderLayout.EAST);
 	}
 
 	public void autoAdjustAll(boolean yesno)
@@ -98,28 +109,29 @@ public class MainWindow extends JFrame
 		}
 	}
 
-	public void addMonitor(final Monitor mon, final BrightnessConverter converter, final TrayIcon trayIcon)
+	public void addMonitor(final Monitor mon, final BrightnessConverter converter)
 	{
 		final JSlider slider = new JSlider();
 		slider.setMajorTickSpacing(20);
-		slider.setMinorTickSpacing(1);
-		slider.createStandardLabels(1);
+		slider.setMinorTickSpacing(5);
+		slider.createStandardLabels(10);
 		slider.setPaintTicks(true);
 		slider.setPaintLabels(true);
 		slider.setSnapToTicks(true);
 		slider.setPreferredSize(new Dimension(400, 100));
-		slider.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 		slider.setMinimum(mon.getMinBrightness());
 		slider.setMaximum(mon.getMaxBrightness());
 		slider.setValue(mon.getBrightness());
+		slider.setPreferredSize(new Dimension(140, 30));
 
 		final JPanel panel = new JPanel(new BorderLayout());
+
 		final JCheckBox checkbox = new JCheckBox("Auto-adjust");
 		list.add(checkbox);
-		final JLabel label1 = new JLabel("-");
-		panel.add(label1, BorderLayout.NORTH);
-		final JLabel label2 = new JLabel("-");
-		panel.add(label2, BorderLayout.SOUTH);
+
+		final JLabel recLabel = new JLabel();
+		recLabel.setBorder(new EmptyBorder(5, 5, 5, 5));
+		panel.add(recLabel, BorderLayout.NORTH);
 
 		timer.addActionListener(new ActionListener()
 		{
@@ -128,27 +140,25 @@ public class MainWindow extends JFrame
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				if (!checkbox.isSelected())
-					return;
-
 				int camBright = webcamWrapper.getBrightness();
 				int monBright = converter.convert(camBright);
 
+				recLabel.setText("The recommended monitor brightness is " + monBright);
+
+				if (!checkbox.isSelected())
+					return;
+
 				int j = monBright - oldBright;
-				if (Math.abs(j) < 5)
+				if (Math.abs(j) < MIN_BRIGHTNESS_CHANGE_DELTA)
 				{
 					return;
 				}
 
-				mon.setBrightness(monBright);
-				label1.setText("Measured a brightness of " + camBright);
-				label2.setText("The recommended monitor brightness is " + monBright);
-				trayIcon.displayMessage("Monitor brightness", "was adjusted to " + monBright, TrayIcon.MessageType.INFO);
-
 				slider.setValue(monBright);
+				mon.setBrightness(monBright);
 
 				oldBright = monBright;
-
+//				trayIcon.displayMessage("Monitor brightness", "was adjusted to " + monBright, TrayIcon.MessageType.INFO);
 			}
 		});
 
@@ -164,11 +174,12 @@ public class MainWindow extends JFrame
 		};
 
 		slider.addChangeListener(changeListener);
-		slider.setBorder(BorderFactory.createTitledBorder(mon.getName()));
+		Border border = BorderFactory.createTitledBorder(mon.getName());
+		border = BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5), border);
+		panel.setBorder(border);
 		panel.add(slider, BorderLayout.CENTER);
-		panel.add(checkbox, BorderLayout.EAST);
-		panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-		rootPanel.add(panel);
+		panel.add(checkbox, BorderLayout.SOUTH);
+		rightPanel.add(panel);
 	}
 
 }

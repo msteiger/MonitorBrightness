@@ -97,6 +97,13 @@ public class SarxosWebcamWrapper implements WebcamWrapper
 		return image;
 	}
 
+
+	@Override
+	public String getName()
+	{
+		return webcam.getName();
+	}
+
 	@Override
 	public void close() throws Exception
 	{

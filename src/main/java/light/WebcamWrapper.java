@@ -23,7 +23,18 @@ import java.awt.image.BufferedImage;
  */
 public interface WebcamWrapper extends AutoCloseable
 {
+	/**
+	 * @return the average image brightness
+	 */
 	int getBrightness();
 
+	/**
+	 * @return the latest image
+	 */
 	BufferedImage getImage();
+
+	/**
+	 * @return the name of the webcam
+	 */
+	String getName();
 }

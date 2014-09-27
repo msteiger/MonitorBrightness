@@ -10,18 +10,24 @@
 package monitor.jna;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import jna.Dxva2;
+import jna.HighLevelMonitorConfigurationAPI;
+import jna.HighLevelMonitorConfigurationAPI.MC_CAPS;
 import jna.MyUser32;
+import jna.HighLevelMonitorConfigurationAPI.MC_DISPLAY_TECHNOLOGY_TYPE;
 import jna.MyWinUser.HMONITOR;
 import jna.MyWinUser.MONITORENUMPROC;
 import jna.MyWinUser.MONITORINFOEX;
 import jna.PhysicalMonitorEnumerationAPI.PHYSICAL_MONITOR;
+import jna.util.EnumUtils;
 
 import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.WinDef.DWORDByReference;
@@ -48,34 +54,23 @@ public class MonitorControllerJna implements MonitorController
 	 */
 	public MonitorControllerJna()
 	{
-		logger.debug("Monitors: " + User32.INSTANCE.GetSystemMetrics(WinUser.SM_CMONITORS));
+		logger.debug("Number of connected monitors: " + User32.INSTANCE.GetSystemMetrics(WinUser.SM_CMONITORS));
 
 		MyUser32.INSTANCE.EnumDisplayMonitors(null, null, new MONITORENUMPROC() {
 
 			@Override
 			public int apply(HMONITOR hMonitor, HDC hdc, RECT rect, LPARAM lparam)
 			{
-				System.out.println("Monitor handle: " + hMonitor);
-
-				MONITORINFOEX info = new MONITORINFOEX();
-				MyUser32.INSTANCE.GetMonitorInfo(hMonitor, info);
-				System.out.println(info.rcMonitor);
-
 				DWORDByReference pdwNumberOfPhysicalMonitors = new DWORDByReference();
 				Dxva2.INSTANCE.GetNumberOfPhysicalMonitorsFromHMONITOR(hMonitor, pdwNumberOfPhysicalMonitors);
 				int monitorCount = pdwNumberOfPhysicalMonitors.getValue().intValue();
-
-				System.out.println("Physical monitors for " + hMonitor + ": " + monitorCount);
 
 				PHYSICAL_MONITOR[] physMons = new PHYSICAL_MONITOR[monitorCount];
 				Dxva2.INSTANCE.GetPhysicalMonitorsFromHMONITOR(hMonitor, monitorCount, physMons);
 
 				for (PHYSICAL_MONITOR mon : physMons)
 				{
-					String desc = new String(mon.szPhysicalMonitorDescription);
-					@SuppressWarnings("resource")
-					MonitorJna monitor = new MonitorJna(mon.hPhysicalMonitor, desc);
-					addMonitor(monitor);
+					addMonitor(mon);
 				}
 
 				return 1;
@@ -86,9 +81,29 @@ public class MonitorControllerJna implements MonitorController
 	/**
 	 * Package private - for enumeration only!
 	 */
-	void addMonitor(MonitorJna monitor)
+	void addMonitor(PHYSICAL_MONITOR mon)
 	{
-		monitors.add(monitor);
+		String desc = new String(mon.szPhysicalMonitorDescription);
+		logger.debug("Found monitor {}", desc.trim());
+
+		DWORDByReference tempsVal = new DWORDByReference();
+		DWORDByReference capVal = new DWORDByReference();
+		Dxva2.INSTANCE.GetMonitorCapabilities(mon.hPhysicalMonitor, capVal, tempsVal);
+
+		Set<MC_CAPS> caps = EnumUtils.setFromInteger(capVal.getValue().intValue(), HighLevelMonitorConfigurationAPI.MC_CAPS.class);
+		logger.debug("CAPS " + caps);
+
+		if (caps.contains(MC_CAPS.MC_CAPS_BRIGHTNESS))
+		{
+			@SuppressWarnings("resource")
+			MonitorJna monitor = new MonitorJna(mon.hPhysicalMonitor, desc);
+
+			monitors.add(monitor);
+		}
+		else
+		{
+			logger.warn("Monitor does not support changing the brightness. Try installing vendor drivers and enable DDC/CI.");
+		}
 	}
 
 	@Override
