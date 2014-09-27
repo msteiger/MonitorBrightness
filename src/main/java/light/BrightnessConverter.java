@@ -13,20 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package light;
 
-import java.awt.image.BufferedImage;
-
 /**
- * Provides information about environmental luminance
+ * Converts measured brightness to monitor brightness
  * @author Martin Steiger
  */
-public interface LuminanceProvider
+public interface BrightnessConverter
 {
-	/**
-	 * @param image the image to use
-	 * @return the luminance in [0..255]
-	 */
-	int getLuminance(BufferedImage image);
+	int convert(int measured);
 }

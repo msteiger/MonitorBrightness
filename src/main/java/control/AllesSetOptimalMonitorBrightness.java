@@ -37,6 +37,7 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import light.WebcamWrapper;
 import monitor.Monitor;
 import monitor.MonitorController;
 import monitor.jna.MonitorControllerJna;
@@ -57,16 +58,7 @@ public class AllesSetOptimalMonitorBrightness {
 		return ImageIO.read(rsc);
 	}
 
-	public static Timer setupTimer(BrightnessActionLi imageProvider)
-	{
-		final Timer timer = new Timer(100, imageProvider);
-		timer.setInitialDelay(0);
-        timer.start();
-
-        return timer;
-	}
-
-	public static TrayIcon geniousTray(final MainWindow frame, final JFrame drawFrame, final Webcam webcam) throws IOException, AWTException
+	public static TrayIcon geniousTray(final MainWindow frame, final JFrame drawFrame, final WebcamWrapper webcam) throws IOException, AWTException
 	{
 		BufferedImage icon = loadImage("icons/lightbulb16.png");
 		final TrayIcon trayIcon = new TrayIcon(icon, "Monitor Brightness Adjuster");
@@ -107,9 +99,16 @@ public class AllesSetOptimalMonitorBrightness {
 
 		exitItem.addActionListener(new ActionListener()
 		{
-			public void actionPerformed(ActionEvent e)
+			public void actionPerformed(ActionEvent event)
 			{
-				webcam.close();
+				try
+				{
+					webcam.close();
+				}
+				catch (Exception e)
+				{
+					e.printStackTrace();
+				}
 				tray.remove(trayIcon);
 				frame.dispose();
 				drawFrame.dispose();

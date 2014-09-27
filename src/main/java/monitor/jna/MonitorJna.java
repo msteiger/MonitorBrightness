@@ -22,7 +22,7 @@ import com.sun.jna.platform.win32.WinDef.DWORDByReference;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 
 /**
- * TODO Type description
+ * Connects to the physical monitor through JNA (v4.2+)
  * @author Martin Steiger
  */
 public class MonitorJna implements Monitor, AutoCloseable
@@ -42,7 +42,7 @@ public class MonitorJna implements Monitor, AutoCloseable
 	public MonitorJna(HANDLE hPhysicalMonitor, String szPhysicalMonitorDescription)
 	{
 		this.handle = hPhysicalMonitor;
-		this.name = szPhysicalMonitorDescription.trim();		// filled up to 255 chars with spaces
+		this.name = szPhysicalMonitorDescription.trim(); // filled up to 255 chars with spaces
 
 		DWORDByReference minBrightness = new DWORDByReference();
 		DWORDByReference curBrightness = new DWORDByReference();
@@ -91,7 +91,8 @@ public class MonitorJna implements Monitor, AutoCloseable
 	}
 
 	@Override
-	public String getName() {
+	public String getName()
+	{
 		return name;
 	}
 

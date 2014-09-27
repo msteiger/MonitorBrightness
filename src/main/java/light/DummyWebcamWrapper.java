@@ -13,20 +13,50 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package light;
 
+import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
 /**
- * Provides information about environmental luminance
+ *
  * @author Martin Steiger
  */
-public interface LuminanceProvider
+public class DummyWebcamWrapper implements WebcamWrapper
 {
+	private static final int HEIGHT = 240;
+	private static final int WIDTH = 320;
+
+	private BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
+	private int bright = 128;
+
 	/**
-	 * @param image the image to use
-	 * @return the luminance in [0..255]
+	 *
 	 */
-	int getLuminance(BufferedImage image);
+	public DummyWebcamWrapper()
+	{
+		Graphics g = image.getGraphics();
+		g.setColor(new Color(bright, bright, bright));
+		g.fillRect(0, 0, WIDTH, HEIGHT);
+		g.dispose();
+	}
+
+	@Override
+	public int getBrightness()
+	{
+		return bright;
+	}
+
+	@Override
+	public BufferedImage getImage()
+	{
+		return image;
+	}
+
+	@Override
+	public void close() throws Exception
+	{
+		// ignore
+	}
 }

@@ -40,30 +40,51 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import light.BrightnessConverter;
+import light.WebcamWrapper;
 import monitor.Monitor;
 import monitor.MonitorController;
 
-public class MainWindow extends JFrame {
-
+public class MainWindow extends JFrame
+{
 	private final List<JCheckBox> list = new ArrayList<JCheckBox>();
 
 	private final JPanel rootPanel;
 
-	private ImageIcon imageIcon;
+	private final WebcamWrapper webcamWrapper;
 
-	private JLabel jLabel;
+	private final Timer timer;
 
-	public MainWindow()
+	public MainWindow(final WebcamWrapper webcamWrapper, Timer timer)
 	{
-		setTitle("Bildschirmhelligkeit anpassen");
+		setTitle("Adjust Monitor Brightness");
 		setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
-		setLocation(500,200);
+		setLocation(500, 200);
 		setLayout(new BorderLayout(5, 5));
 
-		imageIcon = new ImageIcon();
-		jLabel = new JLabel(imageIcon);
-		jLabel.setPreferredSize(new Dimension(320,240));
+		this.timer = timer;
+
+		this.webcamWrapper = webcamWrapper;
+		BufferedImage firstImage = webcamWrapper.getImage();
+
+		final ImageIcon imageIcon = new ImageIcon(firstImage);
+		final JLabel jLabel = new JLabel(imageIcon);
+		jLabel.setPreferredSize(new Dimension(firstImage.getWidth(), firstImage.getHeight()));
 		add(jLabel, BorderLayout.WEST);
+
+		timer.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				BufferedImage image = webcamWrapper.getImage();
+				if (image != null)
+				{
+					imageIcon.setImage(image);
+					jLabel.repaint();
+				}
+			}
+		});
 
 		rootPanel = new JPanel(new GridLayout(0, 1));
 		add(rootPanel, BorderLayout.CENTER);
@@ -77,23 +98,7 @@ public class MainWindow extends JFrame {
 		}
 	}
 
-	public void setupVideo(Timer timer, final BrightnessActionLi imageProvider)
-	{
-        timer.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				BufferedImage image = imageProvider.getImage();
-				if (image != null)
-				{
-					imageIcon.setImage(image);
-					jLabel.repaint();
-				}
-			}
-		});
-       }
-
-	public void addMonitor(final Monitor mon, final Timer timer, final BrightnessActionLi timerListener, final Point point1, final Point point2, final TrayIcon trayIcon)
+	public void addMonitor(final Monitor mon, final BrightnessConverter converter, final TrayIcon trayIcon)
 	{
 		final JSlider slider = new JSlider();
 		slider.setMajorTickSpacing(20);
@@ -116,33 +121,18 @@ public class MainWindow extends JFrame {
 		final JLabel label2 = new JLabel("-");
 		panel.add(label2, BorderLayout.SOUTH);
 
-		timer.addActionListener(new ActionListener() {
-
+		timer.addActionListener(new ActionListener()
+		{
 			private int oldBright = -100;
 
 			@Override
-			public void actionPerformed(ActionEvent e) {
-
+			public void actionPerformed(ActionEvent e)
+			{
 				if (!checkbox.isSelected())
 					return;
 
-				int camBright = timerListener.getBrightness();
-				int monBright = 0;
-
-				if (camBright <  point1.x)
-				{
-					monBright = (int) (camBright * (100.0 - point1.y) / point1.x);
-				}
-
-				else if (camBright < point2.x)
-				{
-					monBright = 100 - point1.y;
-				}
-
-				else
-				{
-					monBright = (int) (100.0 - ((0.0 - point2.y)/(255.0 - point2.x) * (camBright - point2.x) + point2.y));
-				}
+				int camBright = webcamWrapper.getBrightness();
+				int monBright = converter.convert(camBright);
 
 				int j = monBright - oldBright;
 				if (Math.abs(j) < 5)
@@ -162,15 +152,14 @@ public class MainWindow extends JFrame {
 			}
 		});
 
-
 		ChangeListener changeListener = new ChangeListener()
 		{
 			@Override
 			public void stateChanged(ChangeEvent e)
 			{
-        		JSlider source;
-        		source = (JSlider)e.getSource();
-        		mon.setBrightness(source.getValue());
+				JSlider source;
+				source = (JSlider) e.getSource();
+				mon.setBrightness(source.getValue());
 			}
 		};
 
@@ -178,9 +167,8 @@ public class MainWindow extends JFrame {
 		slider.setBorder(BorderFactory.createTitledBorder(mon.getName()));
 		panel.add(slider, BorderLayout.CENTER);
 		panel.add(checkbox, BorderLayout.EAST);
-		panel.setBorder(BorderFactory.createEmptyBorder(10 , 10 , 10 , 10));
+		panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		rootPanel.add(panel);
 	}
-
 
 }

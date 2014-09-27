@@ -16,13 +16,7 @@
 
 package light;
 
-import java.awt.Dimension;
 import java.awt.image.BufferedImage;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.github.sarxos.webcam.Webcam;
 
 /**
  * Provides environmental luminance
@@ -30,36 +24,10 @@ import com.github.sarxos.webcam.Webcam;
  */
 public class WebcamLuminance implements LuminanceProvider
 {
-	static final Logger logger = LoggerFactory.getLogger(WebcamLuminance.class);
-
-	private final Webcam webcam;
-
-	public WebcamLuminance(Webcam webcam)
-	{
-		this.webcam = webcam;
-		this.webcam.setViewSize(new Dimension(320, 240));
-		this.webcam.open();
-	}
-
-	/**
-	 * This operation is thread-safe
-	 * @return the average luminance in [0..255]
-	 */
 	@Override
-	public int getLuminance()
+	public int getLuminance(BufferedImage image)
 	{
-		if (!webcam.isOpen())
-			webcam.open();
-
-		BufferedImage img = webcam.getImage();
-
-		if (img == null)
-		{
-			logger.warn("No image available");
-			return 128;
-		}
-
-		int[] data = img.getRGB(0, 0, img.getWidth(), img.getHeight(), null, 0, img.getWidth());
+		int[] data = image.getRGB(0, 0, image.getWidth(), image.getHeight(), null, 0, image.getWidth());
 
 		int sum = 0;
 
@@ -73,14 +41,7 @@ public class WebcamLuminance implements LuminanceProvider
 		}
 
 		int avg = sum / data.length;
-		logger.debug("Average image luminance {}", avg);
-
 		return avg;
 	}
 
-	@Override
-	public void close() throws Exception
-	{
-		webcam.close();
-	}
 }

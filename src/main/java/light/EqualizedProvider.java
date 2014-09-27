@@ -16,6 +16,7 @@
 
 package light;
 
+import java.awt.image.BufferedImage;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
@@ -57,12 +58,12 @@ public class EqualizedProvider implements LuminanceProvider
 	}
 
 	@Override
-	public int getLuminance()
+	public int getLuminance(BufferedImage image)
 	{
 		if (avgLuminances.size() >= queueLength)
 	        avgLuminances.removeFirst();
 
-		avgLuminances.addLast(base.getLuminance());
+		avgLuminances.addLast(base.getLuminance(image));
 
 		logger.trace("Average image luminance queue {}", avgLuminances);
 
@@ -76,11 +77,4 @@ public class EqualizedProvider implements LuminanceProvider
 
 		return avgLum;
 	}
-
-	@Override
-	public void close() throws Exception
-	{
-		// unused
-	}
-
 }

@@ -13,20 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package light;
 
 import java.awt.image.BufferedImage;
 
 /**
- * Provides information about environmental luminance
+ *
  * @author Martin Steiger
  */
-public interface LuminanceProvider
+public interface WebcamWrapper extends AutoCloseable
 {
-	/**
-	 * @param image the image to use
-	 * @return the luminance in [0..255]
-	 */
-	int getLuminance(BufferedImage image);
+	int getBrightness();
+
+	BufferedImage getImage();
 }
