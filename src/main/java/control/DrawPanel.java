@@ -110,83 +110,66 @@ public class DrawPanel extends JPanel
 	
 	public void paintComponent(Graphics g)
 	{
-		//Graphics2D g2 = (Graphics2D) g;
-		
-		//MonitorController monitorListe = new MonitorControllerJna();
-		//for (final Monitor mon : monitorListe.getMonitors())
-		
-		//{
-			//mon.getminBrightness();
-			//mon.getmaxBrightness();
-			//int diff = mon.getmaxBrightness() - mon.getminBrightness();
+		int diff = 100;
+		super.paintComponent(g);
 			
-			int diff = 100;
-			//Graphics2D g2 = (Graphics2D) g;
-			super.paintComponent(g);
-			
-			g.translate(offset.x, offset.y);
+		g.translate(offset.x, offset.y);
 
-			g.drawLine(0,diff,point1.x,point1.y);
-			g.drawLine(point1.x,point1.y,point2.x,point2.y);
-			g.drawLine(point2.x,point2.y,255,0);
+		g.drawLine(0,diff,point1.x,point1.y);
+		g.drawLine(point1.x,point1.y,point2.x,point2.y);
+		g.drawLine(point2.x,point2.y,255,0);
 			
-			g.drawLine(0-2,diff-2,0+2,diff+2);
-			g.drawLine(0-2,diff+2,0+2,diff-2);
+		g.drawLine(0-2,diff-2,0+2,diff+2);
+		g.drawLine(0-2,diff+2,0+2,diff-2);
 			
-			g.drawLine(point1.x-2,point1.y-2,point1.x+2,point1.y+2);
-			g.drawLine(point1.x-2,point1.y+2,point1.x+2,point1.y-2);
+		g.drawLine(point1.x-2,point1.y-2,point1.x+2,point1.y+2);
+		g.drawLine(point1.x-2,point1.y+2,point1.x+2,point1.y-2);
 
-			g.drawLine(point2.x-2,point2.y-2,point2.x+2,point2.y+2);
-			g.drawLine(point2.x-2,point2.y+2,point2.x+2,point2.y-2);
+		g.drawLine(point2.x-2,point2.y-2,point2.x+2,point2.y+2);
+		g.drawLine(point2.x-2,point2.y+2,point2.x+2,point2.y-2);
 
-			g.drawLine(255-2,0-2,255+2,0+2);
-			g.drawLine(255-2,0+2,255+2,0-2);
+		g.drawLine(255-2,0-2,255+2,0+2);
+		g.drawLine(255-2,0+2,255+2,0-2);
 			
-			g.drawLine(0, 100, 255, 100);
-			g.drawLine(0, 100, 0, 0);
-			g.drawLine(253, 98, 255, 100);
-			g.drawLine(253, 102, 255, 100);
-			g.drawLine(-2, 2, 0, 0);
-			g.drawLine(2, 2, 0, 0);
+		g.drawLine(0, 100, 255, 100);
+		g.drawLine(0, 100, 0, 0);
+		g.drawLine(253, 98, 255, 100);
+		g.drawLine(253, 102, 255, 100);
+		g.drawLine(-2, 2, 0, 0);
+		g.drawLine(2, 2, 0, 0);
 			
-			g.drawLine(-2, 25, 2, 25);
-			g.drawString("75", -20, 30);
-			g.drawLine(-2, 50, 2, 50);
-			g.drawString("50", -20, 55);
-			g.drawLine(-2, 75, 2, 75);
-			g.drawString("25", -20, 80);
-			g.drawString("0", -13, 105);
+		g.drawLine(-2, 25, 2, 25);
+		g.drawString("75", -20, 30);
+		g.drawLine(-2, 50, 2, 50);
+		g.drawString("50", -20, 55);
+		g.drawLine(-2, 75, 2, 75);
+		g.drawString("25", -20, 80);
+		g.drawString("0", -13, 105);
 			
-			g.drawLine(25, 98, 25, 102);
-			//g.drawString("25", 20, 115);
-			g.drawLine(50, 98, 50, 102);
-			g.drawString("50", 45, 115);
-			g.drawLine(75, 98, 75, 102);
-			//g.drawString("75", 70, 115);
-			g.drawLine(100, 98, 100, 102);
-			g.drawString("100", 90, 115);
-			g.drawLine(125, 98, 125, 102);
-			//g.drawString("125", 120, 115);
-			g.drawLine(150, 98, 150, 102);
-			g.drawString("150", 140, 115);
-			g.drawLine(175, 98, 175, 102);
-			//g.drawString("175", 170, 115);
-			g.drawLine(200, 98, 200, 102);
-			g.drawString("200", 190, 115);
-			g.drawLine(225, 98, 225, 102);
-			//g.drawString("225", 220, 115);
-			g.drawLine(250, 98, 250, 102);
-			//g.drawString("250", 245, 115);
+		g.drawLine(25, 98, 25, 102);
+		g.drawLine(50, 98, 50, 102);
+		g.drawString("50", 45, 115);
+		g.drawLine(75, 98, 75, 102);
+		g.drawLine(100, 98, 100, 102);
+		g.drawString("100", 90, 115);
+		g.drawLine(125, 98, 125, 102);
+		g.drawLine(150, 98, 150, 102);
+		g.drawString("150", 140, 115);
+		g.drawLine(175, 98, 175, 102);
+		g.drawLine(200, 98, 200, 102);
+		g.drawString("200", 190, 115);
+		g.drawLine(225, 98, 225, 102);
+		g.drawLine(250, 98, 250, 102);
 			
-			if (pressed == point1)
-			{
-				g.drawString(point1.x + "/" + (100-point1.y), point1.x-35, point1.y-5);
-			}
+		if (pressed == point1)
+		{
+			g.drawString(point1.x + "/" + (100-point1.y), point1.x-35, point1.y-5);
+		}
 			
-			else if (pressed == point2)
-			{
-				g.drawString(point2.x + "/" + (100-point2.y), point2.x+5, point2.y+15);
-			}
+		else if (pressed == point2)
+		{
+			g.drawString(point2.x + "/" + (100-point2.y), point2.x+5, point2.y+15);
+		}
 	}
 }
 
