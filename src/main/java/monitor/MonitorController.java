@@ -18,8 +18,8 @@ package monitor;
 
 import java.util.Collection;
 
-public interface MonitorController
+public interface MonitorController extends AutoCloseable
 {
-	Collection<Monitor> getMonitors();
+	Collection<? extends Monitor> getMonitors();
 
 }

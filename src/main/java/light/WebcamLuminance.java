@@ -16,6 +16,7 @@
 
 package light;
 
+import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 
 import org.slf4j.Logger;
@@ -30,20 +31,18 @@ import com.github.sarxos.webcam.Webcam;
 public class WebcamLuminance implements LuminanceProvider
 {
 	static final Logger logger = LoggerFactory.getLogger(WebcamLuminance.class);
-	
+
 	private final Webcam webcam;
 
-	public WebcamLuminance()
+	public WebcamLuminance(Webcam webcam)
 	{
-		webcam = Webcam.getDefault();
-		if (webcam == null)
-			throw new IllegalStateException("No webcam has been detected!");
-
-		webcam.open();
+		this.webcam = webcam;
+		this.webcam.setViewSize(new Dimension(320, 240));
+		this.webcam.open();
 	}
-	
+
 	/**
-	 * This operation is thread-safe	
+	 * This operation is thread-safe
 	 * @return the average luminance in [0..255]
 	 */
 	@Override
@@ -53,17 +52,17 @@ public class WebcamLuminance implements LuminanceProvider
 			webcam.open();
 
 		BufferedImage img = webcam.getImage();
-		
+
 		if (img == null)
 		{
 			logger.warn("No image available");
 			return 128;
 		}
-		
+
 		int[] data = img.getRGB(0, 0, img.getWidth(), img.getHeight(), null, 0, img.getWidth());
-		
+
 		int sum = 0;
-		
+
 		for (int argb : data)
 		{
 			int r = (argb >> 16) & 0xFF;
@@ -72,10 +71,10 @@ public class WebcamLuminance implements LuminanceProvider
 			int y = (int)(0.2126 * r + 0.7152 * g + 0.0722 * b + 0.5);
 			sum += y;
 		}
-		
+
 		int avg = sum / data.length;
 		logger.debug("Average image luminance {}", avg);
-		
+
 		return avg;
 	}
 

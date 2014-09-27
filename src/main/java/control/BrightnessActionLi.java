@@ -21,9 +21,9 @@ final class BrightnessActionLi implements ActionListener {
 
 			//---------------------------
 			int[] data = image.getRGB(0, 0, image.getWidth(), image.getHeight(), null, 0, image.getWidth());
-			
+
 			int sum = 0;
-			
+
 			for (int argb : data)
 			{
 				int r = (argb >> 16) & 0xFF;
@@ -32,7 +32,7 @@ final class BrightnessActionLi implements ActionListener {
 				int y = (int)(0.2126 * r + 0.7152 * g + 0.0722 * b + 0.5);
 				sum += y;
 			}
-			
+
 			int avg = sum / data.length;
 			brightness = avg;
 		}

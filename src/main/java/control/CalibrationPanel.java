@@ -11,14 +11,14 @@ import javax.swing.JPanel;
 //import monitor.MonitorController;
 //import monitor.jna.MonitorControllerJna;
 
-public class DrawPanel extends JPanel
+public class CalibrationPanel extends JPanel
 {
 	private final Point point1;
 	private final Point point2;
 	private final Point offset = new Point(30, 30);
 	private Point pressed;
 	
-	public DrawPanel()
+	public CalibrationPanel()
 	{
 		int diff = 100;
 		int brightmin = 50;

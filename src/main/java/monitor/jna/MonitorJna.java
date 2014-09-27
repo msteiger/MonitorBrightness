@@ -9,23 +9,17 @@
 
 package monitor.jna;
 
+import jna.Dxva2;
+import monitor.Monitor;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import jna.Dxva2;
-import jna.MyUser32;
-
 import com.sun.jna.platform.win32.Kernel32;
-import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.Win32Exception;
 import com.sun.jna.platform.win32.WinDef.BOOL;
 import com.sun.jna.platform.win32.WinDef.DWORDByReference;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
-
-import java.awt.TrayIcon;
-import java.math.*;
-
-import monitor.Monitor;
 
 /**
  * TODO Type description
@@ -34,41 +28,30 @@ import monitor.Monitor;
 public class MonitorJna implements Monitor, AutoCloseable
 {
 	private static final Logger logger = LoggerFactory.getLogger(MonitorJna.class);
-	
+
 	private final HANDLE handle;
-	private String name;
+	private final String name;
 
-	private int minBright;
-	private int maxBright;
+	private final int minBright;
+	private final int maxBright;
 
-	private int curBright;
-	
 	/**
 	 * @param hPhysicalMonitor Handle to the physical monitor.
-	 * @param szPhysicalMonitorDescription 
+	 * @param szPhysicalMonitorDescription the physical monitor name
 	 */
 	public MonitorJna(HANDLE hPhysicalMonitor, String szPhysicalMonitorDescription)
 	{
 		this.handle = hPhysicalMonitor;
-		this.name = szPhysicalMonitorDescription;
+		this.name = szPhysicalMonitorDescription.trim();		// filled up to 255 chars with spaces
 
 		DWORDByReference minBrightness = new DWORDByReference();
 		DWORDByReference curBrightness = new DWORDByReference();
 		DWORDByReference maxBrightness = new DWORDByReference();
-		
+
 		check(Dxva2.INSTANCE.GetMonitorBrightness(handle, minBrightness, curBrightness, maxBrightness));
-		
+
 		minBright = minBrightness.getValue().intValue();
 		maxBright = maxBrightness.getValue().intValue();
-
-		curBright = curBrightness.getValue().intValue();
-		
-	}
-
-	@Override
-	public int convertLuminance(int avgLum)
-	{
-		return minBright + avgLum * (maxBright - minBright) / 255;
 	}
 
 	@Override
@@ -77,13 +60,12 @@ public class MonitorJna implements Monitor, AutoCloseable
 		DWORDByReference minBrightness = new DWORDByReference();
 		DWORDByReference curBrightness = new DWORDByReference();
 		DWORDByReference maxBrightness = new DWORDByReference();
-		
+
 		check(Dxva2.INSTANCE.GetMonitorBrightness(handle, minBrightness, curBrightness, maxBrightness));
-		
-//		return curBright;
+
 		return curBrightness.getValue().intValue();
 	}
-	
+
 	private void check(BOOL retVal)
 	{
 		if (!retVal.booleanValue())
@@ -100,10 +82,6 @@ public class MonitorJna implements Monitor, AutoCloseable
 		logger.info("Setting brightness {} for monitor {}", i, name);
 
 		check(Dxva2.INSTANCE.SetMonitorBrightness(handle, i));
-		
-		System.out.println("Wurde aufgerufen");
-		
-		curBright = i;
 	}
 
 	@Override
@@ -114,22 +92,17 @@ public class MonitorJna implements Monitor, AutoCloseable
 
 	@Override
 	public String getName() {
-		return name.trim();
+		return name;
 	}
 
-	
-	
-	//
-	
-	
 	@Override
-	public int getminBrightness()
+	public int getMinBrightness()
 	{
 		return minBright;
 	}
 
 	@Override
-	public int getmaxBrightness()
+	public int getMaxBrightness()
 	{
 		return maxBright;
 	}

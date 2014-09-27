@@ -15,19 +15,28 @@ package monitor;
  */
 public interface Monitor
 {
-	int convertLuminance(int avgLum);
-	
 	/**
-	 * @return
+	 * @return the minimum brightness
 	 */
-	int getminBrightness();
+	int getMinBrightness();
+
+	/**
+	 * @return the current brightness
+	 */
 	int getBrightness();
-	int getmaxBrightness();
+
 	/**
-	 * @param i
+	 * @return the minimum brightness
 	 */
-	void setBrightness(int i);
+	int getMaxBrightness();
 
+	/**
+	 * @param bright
+	 */
+	void setBrightness(int bright);
+
+	/**
+	 * @return the name (as reported by the driver)
+	 */
 	String getName();
-
 }

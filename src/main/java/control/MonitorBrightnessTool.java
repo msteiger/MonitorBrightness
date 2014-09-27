@@ -14,27 +14,32 @@
  * limitations under the License.
  */
 
-package monitor.info;
+package control;
 
+import java.awt.AWTException;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
 import javax.swing.JOptionPane;
 
-import control.App;
-
-public class MyGlobalMain
+/**
+ * The main class
+ * @author Martin Steiger
+ */
+public class MonitorBrightnessTool
 {
 	/**
 	 * @param args (ignored)
 	 */
 	public static void main(String[] args)
 	{
-		try (App app = new App())
+		try
 		{
-			app.run();
+			App app = new App();
+//			app.run();
 		}
-		catch (Exception e)
+		catch (IOException | AWTException e)
 		{
 			showError("Could not initialize application", e);
 			return;
