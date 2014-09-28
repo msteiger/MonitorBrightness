@@ -45,7 +45,7 @@ public class DummyWebcamWrapper implements WebcamWrapper
 	@Override
 	public int getBrightness()
 	{
-		return (int) (bright + Math.random() * 10 - 5);
+		return bright;
 	}
 
 	@Override

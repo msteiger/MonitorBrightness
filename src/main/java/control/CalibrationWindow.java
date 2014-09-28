@@ -24,13 +24,15 @@ import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 
+import config.Config;
+
 public class CalibrationWindow extends JFrame
 {
 	private final CalibrationPanel drawPanel;
 
-	public CalibrationWindow()
+	public CalibrationWindow(Config config)
 	{
-		drawPanel = new CalibrationPanel();
+		drawPanel = new CalibrationPanel(config);
 		drawPanel.setPreferredSize(new Dimension(320, 160));
 		drawPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 

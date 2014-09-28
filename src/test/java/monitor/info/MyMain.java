@@ -16,40 +16,32 @@
 
 package monitor.info;
 
-import java.util.EnumSet;
-
 import jna.Dxva2;
 import jna.HighLevelMonitorConfigurationAPI;
 import jna.HighLevelMonitorConfigurationAPI.MC_COLOR_TEMPERATURE;
+import jna.HighLevelMonitorConfigurationAPI.MC_DISPLAY_TECHNOLOGY_TYPE;
 import jna.HighLevelMonitorConfigurationAPI.MC_DRIVE_TYPE;
 import jna.HighLevelMonitorConfigurationAPI.MC_GAIN_TYPE;
 import jna.HighLevelMonitorConfigurationAPI.MC_POSITION_TYPE;
 import jna.HighLevelMonitorConfigurationAPI.MC_SIZE_TYPE;
 import jna.LowLevelMonitorConfigurationAPI.MC_TIMING_REPORT;
-import jna.MyWinUser;
-import jna.HighLevelMonitorConfigurationAPI.MC_DISPLAY_TECHNOLOGY_TYPE;
 import jna.MyUser32;
+import jna.MyWinUser;
 import jna.MyWinUser.HMONITOR;
 import jna.MyWinUser.MONITORENUMPROC;
 import jna.MyWinUser.MONITORINFOEX;
-import jna.PhysicalMonitorEnumerationAPI;
 import jna.PhysicalMonitorEnumerationAPI.PHYSICAL_MONITOR;
 import jna.util.EnumUtils;
 
 import com.sun.jna.Memory;
-import com.sun.jna.platform.win32.Kernel32;
 import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.WTypes.LPSTR;
-import com.sun.jna.platform.win32.Win32Exception;
-import com.sun.jna.platform.win32.WinDef.BOOL;
-import com.sun.jna.platform.win32.WinDef.CHAR;
 import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.DWORDByReference;
 import com.sun.jna.platform.win32.WinDef.HDC;
 import com.sun.jna.platform.win32.WinDef.LPARAM;
 import com.sun.jna.platform.win32.WinDef.RECT;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
-import com.sun.jna.ptr.PointerByReference;
 
 public class MyMain
 {

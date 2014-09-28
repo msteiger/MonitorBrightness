@@ -54,6 +54,9 @@ import org.slf4j.LoggerFactory;
 
 import com.github.sarxos.webcam.Webcam;
 
+import config.Config;
+import config.ConfigSerdesJson;
+
 /**
  * The main class
  * @author Martin Steiger
@@ -65,6 +68,8 @@ public class MonitorBrightnessTool
 	private final MonitorController monitorControl = new MonitorControllerJna();
 
 	private final WebcamWrapper webcamWrapper;
+
+	private Config config;
 
 	/**
 	 * @param args (ignored)
@@ -96,13 +101,15 @@ public class MonitorBrightnessTool
 			webcamWrapper = new DummyWebcamWrapper();
 		}
 
+		config = ConfigSerdesJson.load();
+
 		final Timer timer = new Timer(100, null);
 		timer.setInitialDelay(0);
         timer.start();
 
-        final MainWindow frame = new MainWindow(webcamWrapper, timer);
+        final MainWindow frame = new MainWindow(webcamWrapper, timer, config);
 
-		final CalibrationWindow calibWindow = new CalibrationWindow();
+		final CalibrationWindow calibWindow = new CalibrationWindow(config);
 
 		createTray(frame, calibWindow, webcamWrapper, timer);
 
@@ -117,8 +124,7 @@ public class MonitorBrightnessTool
 		}
 
 		calibWindow.pack();
-		calibWindow.setVisible(true);
-		frame.pack();
+		frame.setSize(630, 310);	// TODO: use pack and find out why it's not working properly
 		frame.setVisible(true);
 	}
 
@@ -178,15 +184,14 @@ public class MonitorBrightnessTool
 					drawFrame.dispose();
 
 					tray.remove(trayIcon);
+
+					ConfigSerdesJson.save(config);
 					logger.info("Finished");
 				}
 				catch (Exception e)
 				{
 					e.printStackTrace();
 				}
-				tray.remove(trayIcon);
-				frame.dispose();
-				drawFrame.dispose();
 			}
 		});
 

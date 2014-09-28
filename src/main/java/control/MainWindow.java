@@ -43,6 +43,7 @@ import javax.swing.event.ChangeListener;
 import light.BrightnessConverter;
 import light.WebcamWrapper;
 import monitor.Monitor;
+import config.Config;
 
 public class MainWindow extends JFrame
 {
@@ -59,7 +60,9 @@ public class MainWindow extends JFrame
 
 	private final Timer timer;
 
-	public MainWindow(final WebcamWrapper webcamWrapper, Timer timer)
+	private Config config;
+
+	public MainWindow(final WebcamWrapper webcamWrapper, Timer timer, Config config)
 	{
 		setTitle("Adjust Monitor Brightness");
 		setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
@@ -67,6 +70,7 @@ public class MainWindow extends JFrame
 		setLayout(new BorderLayout(5, 5));
 
 		this.timer = timer;
+		this.config = config;
 
 		this.webcamWrapper = webcamWrapper;
 		BufferedImage firstImage = webcamWrapper.getImage();
@@ -128,6 +132,17 @@ public class MainWindow extends JFrame
 
 		final JCheckBox checkbox = new JCheckBox("Auto-adjust");
 		list.add(checkbox);
+
+		boolean autoAdjust = config.getAutoAdjust(mon.getName());
+		checkbox.setSelected(autoAdjust);
+		checkbox.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				config.setAutoAdjust(mon.getName(), checkbox.isSelected());
+			}
+		});
 
 		final JLabel recLabel = new JLabel();
 		recLabel.setBorder(new EmptyBorder(5, 5, 5, 5));

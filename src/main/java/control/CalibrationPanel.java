@@ -24,6 +24,8 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.JPanel;
 
+import config.Config;
+
 public class CalibrationPanel extends JPanel
 {
 	private final Point point1;
@@ -31,14 +33,10 @@ public class CalibrationPanel extends JPanel
 	private final Point offset = new Point(30, 30);
 	private Point pressed;
 
-	public CalibrationPanel()
+	public CalibrationPanel(Config config)
 	{
-		int diff = 100;
-		int brightmin = 50;
-		int brightmax = 115;
-
-		point1 = new Point(brightmin, diff / 2);
-		point2 = new Point(brightmax, diff / 2);
+		this.point1 = config.getPoint1();
+		this.point2 = config.getPoint2();
 
 		MouseAdapter ma = new MouseAdapter()
 		{

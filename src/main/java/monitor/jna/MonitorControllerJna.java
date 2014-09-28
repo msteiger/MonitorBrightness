@@ -10,24 +10,23 @@
 package monitor.jna;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import jna.Dxva2;
 import jna.HighLevelMonitorConfigurationAPI;
 import jna.HighLevelMonitorConfigurationAPI.MC_CAPS;
 import jna.MyUser32;
-import jna.HighLevelMonitorConfigurationAPI.MC_DISPLAY_TECHNOLOGY_TYPE;
 import jna.MyWinUser.HMONITOR;
 import jna.MyWinUser.MONITORENUMPROC;
-import jna.MyWinUser.MONITORINFOEX;
 import jna.PhysicalMonitorEnumerationAPI.PHYSICAL_MONITOR;
 import jna.util.EnumUtils;
+import monitor.Monitor;
+import monitor.MonitorController;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.WinDef.DWORDByReference;
@@ -35,9 +34,6 @@ import com.sun.jna.platform.win32.WinDef.HDC;
 import com.sun.jna.platform.win32.WinDef.LPARAM;
 import com.sun.jna.platform.win32.WinDef.RECT;
 import com.sun.jna.platform.win32.WinUser;
-
-import monitor.Monitor;
-import monitor.MonitorController;
 
 /**
  * TODO Type description
